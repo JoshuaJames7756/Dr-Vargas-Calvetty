@@ -1,0 +1,29 @@
+# Dependencias y compilados
+node_modules/
+dist/
+deploy/
+.astro/
+.wrangler/
+coverage/
+playwright-report/
+test-results/
+
+# Secretos. Sin "/" inicial, estas reglas valen en CUALQUIER carpeta del proyecto.
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Archivos de editor y sistema
+.DS_Store
+Thumbs.db
+*.log
+.vscode/*
+!.vscode/extensions.json
+.idea/

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /panel/
+Disallow: /api/
+
+Sitemap: https://dr-vargas.example/sitemap-index.xml

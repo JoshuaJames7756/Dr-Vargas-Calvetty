@@ -1,0 +1,74 @@
+---
+import "../styles/global.css";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import WhatsAppFab from "../components/WhatsAppFab.astro";
+import { CLINIC } from "@dr-vargas/shared";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Ruta canonica relativa, por ejemplo "/cita". */
+  path?: string;
+  noindex?: boolean;
+}
+
+const { title, description, path = "/", noindex = false } = Astro.props;
+const canonical = new URL(path, Astro.site).toString();
+const fullTitle = title.includes("Vargas") ? title : `${title} | Dr. Rolando Vargas Calvetty`;
+
+// Datos estructurados: SOLO informacion verificada (nombre, direccion, telefono). Sin credenciales ni servicios no validados.
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Physician",
+  name: CLINIC.doctorName,
+  url: canonical,
+  telephone: `+${CLINIC.whatsappCountryCode}${CLINIC.phones.whatsapp}`,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: `${CLINIC.address.line1}, ${CLINIC.address.line2}`,
+    addressLocality: "Cochabamba",
+    addressCountry: "BO",
+  },
+};
+---
+
+<!doctype html>
+<html lang="es-BO">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#0a3f42" />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png" />
+    <link rel="apple-touch-icon" href="/icon-180.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_BO" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL("/icon-512.png", Astro.site).toString()} />
+    <meta name="twitter:card" content="summary" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body class="min-h-dvh">
+    <a
+      href="#contenido"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-3 focus:text-ink"
+    >
+      Saltar al contenido
+    </a>
+    <Header />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Footer />
+    <WhatsAppFab />
+  </body>
+</html>

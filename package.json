@@ -1,0 +1,24 @@
+{
+  "name": "dr-vargas",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Sitio web y panel del Dr. Rolando Vargas Calvetty. Xion Technology.",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev:web": "pnpm --filter @dr-vargas/web dev",
+    "dev:panel": "pnpm --filter @dr-vargas/panel dev",
+    "dev:api": "pnpm --filter @dr-vargas/api dev",
+    "build": "pnpm -r build",
+    "build:deploy": "pnpm --filter @dr-vargas/web build && pnpm --filter @dr-vargas/panel build && node scripts/assemble.mjs",
+    "deploy": "pnpm build:deploy && pnpm --filter @dr-vargas/api exec wrangler deploy",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "db:generate": "pnpm --filter @dr-vargas/api db:generate",
+    "db:migrate": "pnpm --filter @dr-vargas/api db:migrate",
+    "db:seed": "pnpm --filter @dr-vargas/api db:seed"
+  }
+}

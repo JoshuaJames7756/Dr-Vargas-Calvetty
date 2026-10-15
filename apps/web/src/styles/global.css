@@ -1,0 +1,172 @@
+@import "tailwindcss";
+@import "@fontsource-variable/fraunces/index.css";
+@import "@fontsource-variable/figtree/index.css";
+
+/*
+ * Sistema de diseno: Dr. Rolando Vargas Calvetty.
+ * Los teals salen del logo (muestreados del archivo original). Crema y rosa son complementos calidos:
+ * la practica es ginecologia, oncologia y mastologia, asi que buscamos serenidad y cercania, no frialdad clinica.
+ */
+@theme {
+  --font-display: "Fraunces Variable", Georgia, serif;
+  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
+
+  /* Marca (logo) */
+  --color-teal-950: #072c2f;
+  --color-teal-900: #0a3f42;
+  --color-teal-800: #0b5d61;
+  --color-teal-700: #0b7c80; /* teal profundo del logo */
+  --color-teal-600: #1c8f8a;
+  --color-teal-500: #38a694; /* verde del logo */
+  --color-teal-400: #5cb5ab; /* aqua del logo */
+  --color-teal-300: #97d1cb; /* menta del logo */
+  --color-teal-200: #c4e5e1;
+  --color-teal-100: #e1f2ef;
+  --color-teal-50: #f0f9f7;
+
+  /* Calidos */
+  --color-cream: #fbf8f3;
+  --color-sand: #f1ebe1;
+  --color-rose-500: #a14d65;
+  --color-rose-400: #cf8a9c;
+  --color-rose-100: #f7e6ea;
+
+  /* Texto */
+  --color-ink: #12343b;
+  --color-ink-soft: #3d5a60;
+  --color-line: #d9e6e3;
+
+  --radius-card: 1.25rem;
+  --shadow-soft: 0 1px 2px rgb(10 63 66 / 0.06), 0 8px 24px -12px rgb(10 63 66 / 0.18);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    line-height: 1.65;
+    text-rendering: optimizeLegibility;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-variation-settings: "SOFT" 60, "WONK" 0;
+    letter-spacing: -0.015em;
+    line-height: 1.12;
+    color: var(--color-teal-900);
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-teal-700);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  .on-dark :focus-visible {
+    outline-color: var(--color-teal-200);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .container-page {
+    width: min(100% - 2.5rem, 72rem);
+    margin-inline: auto;
+  }
+  .eyebrow {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-teal-700);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0.7rem 1.4rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.2;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn-primary {
+    background: var(--color-teal-700);
+    color: #fff;
+  }
+  .btn-primary:hover {
+    background: var(--color-teal-800);
+  }
+  .btn-light {
+    background: var(--color-cream);
+    color: var(--color-teal-900);
+  }
+  .btn-light:hover {
+    background: #fff;
+  }
+  .btn-outline {
+    border: 1.5px solid currentColor;
+    background: transparent;
+  }
+  .btn-whatsapp {
+    background: #1f7a4d;
+    color: #fff;
+  }
+  .btn-whatsapp:hover {
+    background: #17613c;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+  .field {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.65rem 0.9rem;
+    border: 1.5px solid #668684;
+    border-radius: 0.75rem;
+    background: #fff;
+    color: var(--color-ink);
+    font: inherit;
+  }
+  .field:focus-visible {
+    border-color: var(--color-teal-700);
+    outline-offset: 1px;
+  }
+  .field[aria-invalid="true"] {
+    border-color: #b3261e;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}

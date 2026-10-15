@@ -1,0 +1,126 @@
+@import "tailwindcss";
+@import "@fontsource-variable/fraunces/index.css";
+@import "@fontsource-variable/figtree/index.css";
+
+/* Mismos tokens que el sitio publico (derivados del logo), para que ambos se sientan una sola practica. */
+@theme {
+  --font-display: "Fraunces Variable", Georgia, serif;
+  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --color-teal-950: #072c2f;
+  --color-teal-900: #0a3f42;
+  --color-teal-800: #0b5d61;
+  --color-teal-700: #0b7c80;
+  --color-teal-600: #1c8f8a;
+  --color-teal-500: #38a694;
+  --color-teal-400: #5cb5ab;
+  --color-teal-300: #97d1cb;
+  --color-teal-200: #c4e5e1;
+  --color-teal-100: #e1f2ef;
+  --color-teal-50: #f0f9f7;
+  --color-cream: #fbf8f3;
+  --color-sand: #f1ebe1;
+  --color-rose-500: #a14d65;
+  --color-rose-100: #f7e6ea;
+  --color-amber-100: #fbefd0;
+  --color-amber-800: #6b4a00;
+  --color-ink: #12343b;
+  --color-ink-soft: #3d5a60;
+  --color-line: #d9e6e3;
+  --color-danger: #9b1c13;
+  --radius-card: 1rem;
+  --shadow-soft: 0 1px 2px rgb(10 63 66 / 0.06), 0 8px 24px -12px rgb(10 63 66 / 0.18);
+}
+
+@layer base {
+  body {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    line-height: 1.55;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+    color: var(--color-teal-900);
+    line-height: 1.15;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-teal-700);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 2.75rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s;
+    border: 1.5px solid transparent;
+  }
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    background: var(--color-teal-700);
+    color: #fff;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--color-teal-800);
+  }
+  .btn-outline {
+    border-color: var(--color-teal-700);
+    color: var(--color-teal-800);
+    background: #fff;
+  }
+  .btn-outline:hover:not(:disabled) {
+    background: var(--color-teal-50);
+  }
+  .btn-danger {
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+    background: #fff;
+  }
+  .btn-danger:hover:not(:disabled) {
+    background: #fdecea;
+  }
+  .btn-whatsapp {
+    background: #1f7a4d;
+    color: #fff;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+  .field {
+    min-height: 2.75rem;
+    padding: 0.4rem 0.7rem;
+    border: 1.5px solid #668684;
+    border-radius: 0.6rem;
+    background: #fff;
+    font: inherit;
+    color: var(--color-ink);
+  }
+}

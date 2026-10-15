@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "dr-vargas",
+  "main": "src/index.ts",
+  // Verificar la fecha vigente de compatibilidad al desplegar.
+  "compatibility_date": "2025-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  // Sitio (Astro) en "/" y panel en "/panel/". Se genera con `pnpm build:deploy`.
+  "assets": {
+    "directory": "../../deploy/assets",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    // Solo estas rutas ejecutan el Worker. Lo demas (sitio, /panel/assets/*) se sirve como archivo estatico.
+    "run_worker_first": ["/api/*", "/panel/*", "!/panel/assets/*"]
+  },
+  "vars": {
+    "CLINIC_TIMEZONE": "America/La_Paz"
+  },
+  // Conserva las variables y secretos que definas en el dashboard de Cloudflare al desplegar.
+  "keep_vars": true,
+  "observability": { "enabled": true }
+  // Secretos y variables que van en el dashboard (Settings > Variables and Secrets), NUNCA aqui:
+  // DATABASE_URL, CLERK_SECRET_KEY, CLERK_PUBLISHABLE_KEY, TURNSTILE_SECRET_KEY, ALLOWED_ORIGIN.
+  // En local se leen de apps/api/.dev.vars.
+}

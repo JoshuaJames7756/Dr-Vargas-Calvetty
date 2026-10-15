@@ -1,0 +1,35 @@
+{
+  "name": "@dr-vargas/api",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx scripts/seed-services.ts",
+    "db:add-staff": "tsx scripts/add-staff.ts",
+    "db:verify": "tsx scripts/verify-db.ts"
+  },
+  "dependencies": {
+    "@clerk/backend": "^2.0.0",
+    "@dr-vargas/shared": "workspace:*",
+    "@hono/zod-validator": "^0.7.0",
+    "@neondatabase/serverless": "^1.0.0",
+    "drizzle-orm": "^0.44.0",
+    "hono": "^4.7.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251001.0",
+    "drizzle-kit": "^0.31.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.6.0",
+    "vitest": "^3.0.0",
+    "wrangler": "^4.0.0"
+  }
+}

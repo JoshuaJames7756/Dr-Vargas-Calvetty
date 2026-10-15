@@ -1,0 +1,21 @@
+---
+import { MessageCircle } from "lucide-react";
+import { whatsappLink } from "@dr-vargas/shared";
+
+const href = whatsappLink("Hola, quisiera consultar sobre una cita con el Dr. Vargas.");
+---
+
+<!--
+  Boton flotante. Abrir WhatsApp NO envia ningun mensaje: solo abre la conversacion con un texto sugerido.
+  Se ubica abajo a la derecha con margen de seguridad y no cubre contenido (el pie de pagina deja espacio).
+-->
+<a
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="fixed bottom-4 right-4 z-50 inline-flex h-14 items-center gap-2 rounded-full bg-[#1f7a4d] px-4 text-white shadow-[0_8px_24px_-8px_rgb(0_0_0/0.45)] transition hover:bg-[#17613c] sm:bottom-6 sm:right-6 sm:px-5"
+  aria-label="Escribir por WhatsApp (se abre en una pestaña nueva)"
+>
+  <MessageCircle aria-hidden="true" size={24} />
+  <span class="hidden text-[0.95rem] font-semibold sm:inline">WhatsApp</span>
+</a>

@@ -1,0 +1,48 @@
+---
+import { Image } from "astro:assets";
+import logo from "../assets/logo.png";
+import MobileNav from "./MobileNav.tsx";
+
+interface Props {
+  current?: string;
+}
+const { current } = Astro.props;
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const links = [
+  { href: `${base}/#especialidades`, label: "Especialidades" },
+  { href: `${base}/#doctor`, label: "El doctor" },
+  { href: `${base}/#como-funciona`, label: "Cómo pedir cita" },
+  { href: `${base}/#contacto`, label: "Contacto" },
+];
+const cta = `${base}/cita`;
+---
+
+<header class="sticky top-0 z-40 border-b border-line bg-cream/95 backdrop-blur supports-[backdrop-filter]:bg-cream/85">
+  <div class="container-page relative flex h-[4.5rem] items-center justify-between gap-4">
+    <a href={`${base}/`} class="flex items-center gap-3" aria-label="Dr. Rolando Vargas Calvetty, inicio">
+      <Image src={logo} alt="" width={56} height={36} class="h-9 w-auto" loading="eager" />
+      <span class="leading-tight">
+        <span class="block font-display text-[1.05rem] font-semibold text-teal-900">Dr. Rolando Vargas Calvetty</span>
+        <span class="block text-xs tracking-wide text-ink-soft">Ginecólogo Oncólogo · Mastólogo</span>
+      </span>
+    </a>
+
+    <nav aria-label="Principal" class="hidden items-center gap-7 md:flex">
+      {
+        links.map((l) => (
+          <a
+            href={l.href}
+            class="text-[0.95rem] font-medium text-ink-soft hover:text-teal-700"
+            aria-current={current === l.href ? "page" : undefined}
+          >
+            {l.label}
+          </a>
+        ))
+      }
+      <a href={cta} class="btn btn-primary !min-h-11 !py-2">Solicitar cita</a>
+    </nav>
+
+    <MobileNav client:load links={links} ctaHref={cta} />
+  </div>
+</header>

@@ -1,0 +1,20 @@
+---
+/**
+ * Marcador de contenido pendiente de validar por el doctor.
+ * Visible solo mientras PUBLIC_SHOW_PENDING sea "true" (por defecto en desarrollo).
+ * En produccion NO se muestra: nada de texto de relleno publicado.
+ */
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+const show = import.meta.env.PUBLIC_SHOW_PENDING ?? (import.meta.env.DEV ? "true" : "false");
+---
+
+{
+  show === "true" && (
+    <p class="my-3 rounded-lg border border-dashed border-rose-500 bg-rose-100 px-3 py-2 text-sm text-ink">
+      <strong class="font-semibold">PENDIENTE:</strong> {label}
+    </p>
+  )
+}

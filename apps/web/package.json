@@ -1,0 +1,46 @@
+{
+  "name": "@dr-vargas/web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:e2e": "PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA astro build && playwright test"
+  },
+  "dependencies": {
+    "@astrojs/react": "^7.0.1",
+    "@astrojs/sitemap": "^3.7.4",
+    "@dr-vargas/shared": "workspace:*",
+    "@fontsource-variable/figtree": "^5.3.0",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@hookform/resolvers": "^5.9.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@tanstack/react-query": "^5.104.2",
+    "astro": "^7.3.8",
+    "lucide-react": "^1.56.0",
+    "motion": "^14.2.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-hook-form": "^7.90.0",
+    "sharp": "^0.35.5",
+    "tailwindcss": "^4.3.3",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@emnapi/core": "^1.11.3",
+    "@emnapi/runtime": "^1.11.3",
+    "@playwright/test": "1.56.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "sirv-cli": "^3.0.1",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.7"
+  }
+}
