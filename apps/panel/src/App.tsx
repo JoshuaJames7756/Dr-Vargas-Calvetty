@@ -6,6 +6,8 @@ import { ApiError } from "./lib/api";
 import { useMe } from "./lib/useMe";
 import Agenda from "./pages/Agenda";
 import Availability from "./pages/Availability";
+import PatientDetail from "./pages/PatientDetail";
+import Patients from "./pages/Patients";
 import Requests from "./pages/Requests";
 import Today from "./pages/Today";
 
@@ -41,6 +43,8 @@ function Authorized() {
         <Route index element={<Today />} />
         <Route path="solicitudes" element={<Requests />} />
         <Route path="agenda" element={<Agenda />} />
+        <Route path="pacientes" element={<Patients />} />
+        <Route path="pacientes/:id" element={<PatientDetail />} />
         <Route path="disponibilidad" element={<Availability />} />
         <Route path="*" element={<Today />} />
       </Route>

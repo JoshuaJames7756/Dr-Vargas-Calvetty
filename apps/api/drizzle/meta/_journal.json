@@ -15,6 +15,13 @@
       "when": 1791934860098,
       "tag": "0001_constraints",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792107422310,
+      "tag": "0002_patients_and_notes",
+      "breakpoints": true
     }
   ]
 }

@@ -34,6 +34,15 @@ describe("seguridad de la API", () => {
     expect(body.error.code).toBe("UNAUTHORIZED");
   });
 
+  it.each(["/api/patients", "/api/patients/00000000-0000-4000-8000-000000000000/notes"])("pacientes y notas exigen sesion: %s (401)", async (path) => {
+    expect((await call(path)).status).toBe(401);
+  });
+
+  it("el vinculo cita-paciente exige sesion (401)", async () => {
+    const res = await call("/api/appointments/00000000-0000-4000-8000-000000000000/patient", { method: "POST", body: "{}", headers: { "Content-Type": "application/json" } });
+    expect(res.status).toBe(401);
+  });
+
   it("las rutas privadas rechazan un token invalido (401)", async () => {
     const res = await call("/api/appointments", { headers: { Authorization: "Bearer no-es-un-jwt" } });
     expect(res.status).toBe(401);

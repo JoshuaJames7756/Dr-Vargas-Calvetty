@@ -7,6 +7,7 @@ import { AppError } from "./lib/errors";
 import { requireStaff } from "./middleware/auth";
 import { appointmentRoutes } from "./routes/appointments";
 import { availabilityRoutes } from "./routes/availability";
+import { patientRoutes } from "./routes/patients";
 import { publicRoutes } from "./routes/public";
 
 const app = new Hono<AppEnv>();
@@ -47,6 +48,10 @@ app.get("/api/me", requireStaff, (c) => {
 app.use("/api/appointments/*", requireStaff);
 app.use("/api/appointments", requireStaff);
 app.route("/api/appointments", appointmentRoutes);
+
+app.use("/api/patients/*", requireStaff);
+app.use("/api/patients", requireStaff);
+app.route("/api/patients", patientRoutes);
 
 app.use("/api/availability/*", requireStaff);
 app.use("/api/availability", requireStaff);

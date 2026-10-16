@@ -1,6 +1,6 @@
 import { useAuth } from "@clerk/clerk-react";
 import { useCallback } from "react";
-import type { AppointmentStatus, ExceptionInput, WeeklyScheduleInput } from "@dr-vargas/shared";
+import type { AppointmentStatus, ExceptionInput, PatientInput, WeeklyScheduleInput } from "@dr-vargas/shared";
 
 const API_BASE = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
 
@@ -27,6 +27,35 @@ export interface AppointmentDto {
   serviceId: string;
   serviceName: string;
   createdAt: string;
+}
+
+export interface PatientDto {
+  id: string;
+  fullName: string;
+  phone: string;
+  birthDate: string | null;
+  email: string | null;
+  createdAt: string;
+}
+
+export interface PatientAppointmentDto {
+  id: string;
+  status: AppointmentStatus;
+  startsAt: string;
+  endsAt: string;
+  reason: string | null;
+  serviceName: string;
+}
+
+export interface NoteDto {
+  id: string;
+  body: string;
+  appointmentId: string | null;
+  amendsId: string | null;
+  createdAt: string;
+  authorName: string;
+  /** true si existe una correccion posterior de esta nota. */
+  superseded: boolean;
 }
 
 export interface DayConfig {
@@ -102,6 +131,20 @@ export function useApi() {
     saveWeekly: (body: WeeklyScheduleInput) => request<{ ok: true }>("/api/availability/weekly", { method: "PUT", body: JSON.stringify(body) }),
     saveException: (date: string, body: ExceptionInput) =>
       request<{ ok: true }>(`/api/availability/exceptions/${date}`, { method: "PUT", body: JSON.stringify(body) }),
+    searchPatients: (q: string, offset = 0) => {
+      const p = new URLSearchParams();
+      if (q) p.set("q", q);
+      if (offset) p.set("offset", String(offset));
+      return request<{ patients: PatientDto[]; hasMore: boolean }>(`/api/patients?${p}`);
+    },
+    getPatient: (id: string) => request<{ patient: PatientDto; appointments: PatientAppointmentDto[] }>(`/api/patients/${id}`),
+    createPatient: (body: PatientInput) => request<{ patient: PatientDto }>("/api/patients", { method: "POST", body: JSON.stringify(body) }),
+    updatePatient: (id: string, body: PatientInput) => request<{ patient: PatientDto }>(`/api/patients/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+    linkAppointment: (appointmentId: string, patientId?: string) =>
+      request<{ patientId: string; created: boolean }>(`/api/appointments/${appointmentId}/patient`, { method: "POST", body: JSON.stringify({ patientId }) }),
+    listNotes: (patientId: string) => request<{ notes: NoteDto[] }>(`/api/patients/${patientId}/notes`).then((r) => r.notes),
+    addNote: (patientId: string, body: string, amendsId?: string) =>
+      request<{ note: { id: string } }>(`/api/patients/${patientId}/notes`, { method: "POST", body: JSON.stringify({ body, amendsId }) }),
     deleteException: (date: string) => request<{ ok: true }>(`/api/availability/exceptions/${date}`, { method: "DELETE" }),
   };
 }

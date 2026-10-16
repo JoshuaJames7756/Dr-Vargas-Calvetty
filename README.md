@@ -35,6 +35,12 @@ Pantallas: Hoy, Solicitudes, Agenda y Disponibilidad. Las acciones salen de las 
 3. Entrar a Clerk no basta: el acceso lo da la tabla `staff_users`. Autoriza a una persona con `pnpm --filter @dr-vargas/api db:add-staff` (rol `doctor` o `assistant`).
 4. Desarrollo: `pnpm --filter panel dev` (proxy de `/api` al Worker local en el puerto 8787).
 
+## Pacientes y notas clínicas
+
+- Pantalla Pacientes: búsqueda por nombre o teléfono, ficha, historial de citas. Desde una cita confirmada, «Crear ficha» crea el paciente (o reutiliza uno con el mismo teléfono).
+- Las notas clínicas son solo del doctor (la asistente recibe 403 en el servidor). Cada lectura se registra en la auditoría sin copiar el contenido. Son de solo inserción: una corrección crea una nota nueva y conserva la anterior.
+- Migración: `pnpm db:migrate` (aplica la 0002). Pruebas con Postgres real: `TEST_DATABASE_URL=... pnpm --filter @dr-vargas/api test` contra una base de pruebas vacía con las migraciones aplicadas, nunca la de producción.
+
 ## Variables de entorno
 
 Copia `.env.example` y reparte los valores:

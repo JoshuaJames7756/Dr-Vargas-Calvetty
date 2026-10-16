@@ -1,8 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { CalendarClock, Loader2, MessageCircle, Phone } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { CalendarClock, Loader2, MessageCircle, Phone, UserRound } from "lucide-react";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { toast } from "sonner";
 import { CLINIC, patientWhatsappLink } from "@dr-vargas/shared";
-import { useApi, type AppointmentDto } from "../lib/api";
+import { ApiError, useApi, type AppointmentDto } from "../lib/api";
 import { actionsFor, type ActionDef } from "../lib/actions";
 import { addDays, capitalize, fmtDay, fmtTime, localDate, todayLocal } from "../lib/time";
 import { useAppointmentActions } from "../lib/useAppointmentActions";
@@ -21,6 +23,23 @@ export default function AppointmentCard({ appt, showDay = false }: { appt: Appoi
   const [pending, setPending] = useState<ActionDef | null>(null);
   const [rescheduling, setRescheduling] = useState(false);
   const busy = changeStatus.isPending || reschedule.isPending;
+  const api = useApi();
+  const qc = useQueryClient();
+  const navigate = useNavigate();
+  const link = useMutation({
+    mutationFn: () => api.linkAppointment(appt.id),
+    onSuccess: (r) => {
+      toast.success(r.created ? "Ficha de paciente creada" : "Cita vinculada a un paciente existente");
+      qc.invalidateQueries({ queryKey: ["appointments"] });
+      qc.invalidateQueries({ queryKey: ["patients"] });
+      navigate(`/pacientes/${r.patientId}`);
+    },
+    onError: (e) => {
+      toast.error(e instanceof ApiError ? e.message : "No se pudo crear la ficha.");
+      qc.invalidateQueries({ queryKey: ["appointments"] });
+    },
+  });
+  const canHavePatient = appt.status === "CONFIRMED" || appt.status === "COMPLETED";
 
   const run = (a: ActionDef) => {
     if (a.key === "reschedule") return setRescheduling(true);
@@ -57,6 +76,16 @@ export default function AppointmentCard({ appt, showDay = false }: { appt: Appoi
           <MessageCircle aria-hidden size={16} /> {appt.status === "CONFIRMED" ? "Avisar por WhatsApp" : "WhatsApp"}
           <span className="sr-only"> (abre WhatsApp, no envía el mensaje)</span>
         </a>
+        {canHavePatient &&
+          (appt.patientId ? (
+            <Link className="btn btn-outline" to={`/pacientes/${appt.patientId}`}>
+              <UserRound aria-hidden size={16} /> Ver paciente
+            </Link>
+          ) : (
+            <button type="button" className="btn btn-outline" disabled={link.isPending} onClick={() => link.mutate()}>
+              {link.isPending ? <Loader2 aria-hidden size={16} className="animate-spin" /> : <UserRound aria-hidden size={16} />} Crear ficha
+            </button>
+          ))}
         {actionsFor(appt.status).map((a) => (
           <button key={a.key} type="button" className={`btn btn-${a.tone}`} disabled={busy} onClick={() => run(a)}>
             {busy && changeStatus.variables?.to === a.to ? <Loader2 aria-hidden size={16} className="animate-spin" /> : null}

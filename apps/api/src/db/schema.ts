@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  type AnyPgColumn,
   bigserial,
   boolean,
   check,
@@ -105,6 +106,8 @@ export const patients = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     fullName: text("full_name").notNull(),
     phone: text("phone").notNull(),
+    birthDate: date("birth_date", { mode: "string" }),
+    email: text("email"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -184,4 +187,29 @@ export const auditLog = pgTable(
     metadata: jsonb("metadata").$type<Record<string, unknown>>(),
   },
   (t) => [index("audit_log_at_idx").on(t.at), index("audit_log_entity_idx").on(t.entityType, t.entityId)],
+);
+
+/**
+ * Notas clinicas. Solo las ve y escribe el doctor. Son de solo insercion: una correccion es una nota nueva
+ * que apunta a la anterior (amends_id). Un trigger impide modificar o borrar (ver migracion 0002).
+ */
+export const patientNotes = pgTable(
+  "patient_notes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    patientId: uuid("patient_id")
+      .notNull()
+      .references(() => patients.id, { onDelete: "restrict" }),
+    appointmentId: uuid("appointment_id").references(() => appointments.id, { onDelete: "restrict" }),
+    authorStaffId: uuid("author_staff_id")
+      .notNull()
+      .references(() => staffUsers.id, { onDelete: "restrict" }),
+    body: text("body").notNull(),
+    amendsId: uuid("amends_id").references((): AnyPgColumn => patientNotes.id, { onDelete: "restrict" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    check("patient_notes_body_length", sql`char_length(${t.body}) between 1 and 10000`),
+    index("patient_notes_patient_idx").on(t.patientId, t.createdAt),
+  ],
 );

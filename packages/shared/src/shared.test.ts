@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  patientInputSchema,
+  patientNoteSchema,
   ALLOWED_TRANSITIONS,
   APPOINTMENT_STATUSES,
   appointmentRequestSchema,
@@ -178,5 +180,26 @@ describe("whatsapp hacia pacientes", () => {
   });
   it("no duplica el codigo de pais", () => {
     expect(patientWhatsappLink("+591 70344225", "Hola")).toBe("https://wa.me/59170344225?text=Hola");
+  });
+});
+
+describe("patientInputSchema y patientNoteSchema", () => {
+  it("normaliza telefono y vacios opcionales", () => {
+    const r = patientInputSchema.parse({ fullName: "  Ana Pérez ", phone: "7 123-4567", birthDate: null, email: "ANA@Mail.com" });
+    expect(r.fullName).toBe("Ana Pérez");
+    expect(r.phone).toBe("71234567");
+    expect(r.email).toBe("ana@mail.com");
+  });
+  it("rechaza fechas de nacimiento futuras o imposibles", () => {
+    const base = { fullName: "Ana Pérez", phone: "71234567" };
+    expect(patientInputSchema.safeParse({ ...base, birthDate: "2999-01-01" }).success).toBe(false);
+    expect(patientInputSchema.safeParse({ ...base, birthDate: "1850-01-01" }).success).toBe(false);
+    expect(patientInputSchema.safeParse({ ...base, birthDate: "2020-13-45" }).success).toBe(false);
+    expect(patientInputSchema.safeParse({ ...base, birthDate: "1990-05-20" }).success).toBe(true);
+  });
+  it("las notas no pueden estar vacias ni exceder el limite", () => {
+    expect(patientNoteSchema.safeParse({ body: "   " }).success).toBe(false);
+    expect(patientNoteSchema.safeParse({ body: "x".repeat(10_001) }).success).toBe(false);
+    expect(patientNoteSchema.safeParse({ body: "ok" }).success).toBe(true);
   });
 });

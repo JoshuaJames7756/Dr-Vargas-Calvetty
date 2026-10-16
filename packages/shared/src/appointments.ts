@@ -36,7 +36,7 @@ export const SLOT_BLOCKING_STATUSES: readonly AppointmentStatus[] = ["CONFIRMED"
 
 // ---------- Esquemas de entrada ----------
 
-const phoneSchema = z
+export const phoneSchema = z
   .string()
   .trim()
   .transform((v) => v.replace(/[\s\-().]/g, ""))

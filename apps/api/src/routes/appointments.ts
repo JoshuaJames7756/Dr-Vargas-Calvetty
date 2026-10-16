@@ -1,8 +1,9 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { z } from "zod";
-import { APPOINTMENT_STATUSES, changeStatusSchema } from "@dr-vargas/shared";
+import { APPOINTMENT_STATUSES, changeStatusSchema, linkPatientSchema } from "@dr-vargas/shared";
 import type { AppEnv } from "../env";
+import { linkAppointmentToPatient } from "../modules/patients/service";
 import { changeAppointmentStatus, listAppointments, rescheduleAppointment } from "../modules/appointments/service";
 
 /** Rutas privadas: el middleware requireStaff se aplica al montar este router (ver index.ts). */
@@ -52,5 +53,17 @@ appointmentRoutes.post(
       actorStaffId: c.get("staff").id,
     });
     return c.json({ appointment: next }, 201);
+  },
+);
+
+appointmentRoutes.post(
+  "/:id/patient",
+  zValidator("param", z.object({ id: z.string().uuid() })),
+  zValidator("json", linkPatientSchema),
+  async (c) => {
+    const { id } = c.req.valid("param");
+    const { patientId } = c.req.valid("json");
+    const result = await linkAppointmentToPatient(c.get("db"), id, patientId, c.get("staff").id);
+    return c.json(result, result.created ? 201 : 200);
   },
 );
