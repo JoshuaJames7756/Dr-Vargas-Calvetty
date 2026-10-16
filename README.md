@@ -130,3 +130,5 @@ Un solo Worker sirve el sitio en `/`, el panel en `/panel/` y la API en `/api/*`
 6. Migraciones y alta de personal: `docs/verificar-base.sql` y `docs/autorizar-staff.sql` en el SQL Editor de Neon.
 
 Las migraciones no se ejecutan en el despliegue ni en cada solicitud: se aplican a mano con `pnpm db:migrate`.
+
+Turnstile con claves reales activado.
