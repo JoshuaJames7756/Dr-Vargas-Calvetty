@@ -77,6 +77,26 @@ test.describe("sitio publico", () => {
     }
   });
 
+  test("el menu lleva a las paginas del sitio y el contacto incluye Facebook y horario", async ({ page, isMobile }) => {
+    await page.goto("/");
+    if (isMobile) await page.getByRole("button", { name: "Abrir menú" }).click();
+    const nav = page.getByRole("navigation", { name: isMobile ? "Menú principal" : "Principal" });
+    await nav.getByRole("link", { name: "Contacto" }).click();
+    await expect(page).toHaveURL(/\/contacto\/?$/);
+    await expect(page.getByText("Lunes a viernes, de 14:00 a 18:00")).toBeVisible();
+    await expect(page.getByRole("link", { name: /Página del consultorio/ })).toHaveAttribute("href", "https://www.facebook.com/ginecologocochabamba/");
+  });
+
+  test("las preguntas frecuentes se abren y se cierran", async ({ page }) => {
+    await page.goto("/preguntas/");
+    const q = page.getByText("¿Necesito crear una cuenta para pedir una cita?");
+    await expect(page.getByText(/Solo necesitas tu nombre/)).toBeHidden();
+    await q.click();
+    await expect(page.getByText(/Solo necesitas tu nombre/)).toBeVisible();
+    await q.click();
+    await expect(page.getByText(/Solo necesitas tu nombre/)).toBeHidden();
+  });
+
   test("los enlaces externos usan rel noopener", async ({ page }) => {
     await page.goto("/");
     const external = page.locator('a[target="_blank"]');
@@ -152,7 +172,7 @@ test.describe("solicitud de cita", () => {
 });
 
 test.describe("accesibilidad (axe, WCAG 2.2 AA)", () => {
-  for (const path of ["/", "/cita/", "/privacidad/"]) {
+  for (const path of ["/", "/cita/", "/privacidad/", "/servicios/", "/doctor/", "/preguntas/", "/contacto/"]) {
     test(`sin violaciones serias en ${path}`, async ({ page }) => {
       await mockApi(page);
       await page.goto(path);

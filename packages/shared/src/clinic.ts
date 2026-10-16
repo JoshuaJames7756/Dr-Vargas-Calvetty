@@ -12,7 +12,6 @@ export const CLINIC = {
   address: {
     line1: "Parque Fidel Anze N° 200, esq. Av. Pando",
     line2: "Edificio V&V NUR",
-    // PENDIENTE: confirmar piso con el doctor (el brief indica "primer piso", la tarjeta no lo menciona).
     floor: "Primer piso",
     city: "Cochabamba, Bolivia",
   },
@@ -22,9 +21,15 @@ export const CLINIC = {
   },
   // Codigo de pais de Bolivia para enlaces wa.me
   whatsappCountryCode: "591",
+  /**
+   * Horario de atencion mostrado en el sitio. Dato provisional dado por Xion para la demostracion:
+   * el doctor debe confirmarlo. Los horarios reales para pedir cita salen de la agenda (panel, Disponibilidad).
+   */
+  hours: {
+    label: "Lunes a viernes, de 14:00 a 18:00",
+  },
   social: {
-    // PENDIENTE: enlace exacto de Facebook.
-    facebook: null as string | null,
+    facebook: "https://www.facebook.com/ginecologocochabamba/" as string | null,
   },
 } as const;
 

@@ -1,0 +1,24 @@
+---
+/**
+ * Recuadro de contenido de EJEMPLO para mostrar al doctor. Se reemplaza por su texto real.
+ * Fuera de modo demostracion (PUBLIC_SHOW_PENDING distinto de "true") no se muestra nada.
+ */
+import { SHOW_PENDING } from "../lib/pending";
+
+interface Props {
+  label?: string;
+}
+const { label = "Texto de ejemplo. El doctor lo reemplaza o lo aprueba." } = Astro.props;
+---
+
+{
+  SHOW_PENDING && (
+    <div class="relative mt-6 rounded-2xl border-2 border-dashed border-rose-400 bg-rose-100/60 p-5 pt-7">
+      <p class="absolute -top-3 left-4 rounded-full bg-rose-500 px-3 py-0.5 text-xs font-bold uppercase tracking-wider text-white">
+        Ejemplo
+      </p>
+      <p class="mb-3 text-sm font-semibold text-rose-500">{label}</p>
+      <slot />
+    </div>
+  )
+}

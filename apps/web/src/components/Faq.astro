@@ -1,0 +1,24 @@
+---
+/** Acordeon con <details>: accesible por teclado y lector de pantalla, sin JavaScript. */
+import { ChevronDown } from "lucide-react";
+import type { FaqItem } from "../data/faq";
+
+interface Props {
+  items: FaqItem[];
+}
+const { items } = Astro.props;
+---
+
+<div class="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-white shadow-[var(--shadow-soft)]">
+  {
+    items.map((f) => (
+      <details class="group">
+        <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-left font-semibold text-teal-900 hover:bg-teal-50 [&::-webkit-details-marker]:hidden">
+          <span>{f.q}</span>
+          <ChevronDown aria-hidden="true" size={20} class="shrink-0 text-teal-700 transition-transform group-open:rotate-180" />
+        </summary>
+        <p class="px-5 pb-5 text-ink-soft">{f.a}</p>
+      </details>
+    ))
+  }
+</div>

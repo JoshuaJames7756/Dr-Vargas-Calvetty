@@ -30,6 +30,7 @@ const jsonLd = {
     addressLocality: "Cochabamba",
     addressCountry: "BO",
   },
+  ...(CLINIC.social.facebook ? { sameAs: [CLINIC.social.facebook] } : {}),
 };
 ---
 

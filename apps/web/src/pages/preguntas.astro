@@ -1,0 +1,34 @@
+---
+import Faq from "../components/Faq.astro";
+import Sample from "../components/Sample.astro";
+import Base from "../layouts/Base.astro";
+import { FAQ_CITAS, FAQ_CONSULTAS_EJEMPLO } from "../data/faq";
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+
+<Base
+  title="Preguntas frecuentes"
+  description="Respuestas sobre cómo solicitar una cita, horarios y ubicación del consultorio del Dr. Rolando Vargas Calvetty en Cochabamba."
+  path="/preguntas"
+>
+  <section class="py-12 md:py-20">
+    <div class="container-page max-w-3xl">
+      <p class="eyebrow">Preguntas frecuentes</p>
+      <h1 class="mt-3 text-4xl sm:text-5xl">Lo que más nos preguntan</h1>
+
+      <h2 class="mt-10 text-2xl">Sobre las citas y el consultorio</h2>
+      <div class="mt-4"><Faq items={FAQ_CITAS} /></div>
+
+      <Sample label="Preguntas de consulta médica de ejemplo. Las respuestas las redacta el doctor.">
+        <h2 class="text-2xl">Sobre las consultas</h2>
+        <div class="mt-4"><Faq items={FAQ_CONSULTAS_EJEMPLO} /></div>
+      </Sample>
+
+      <p class="mt-10 text-ink-soft">
+        ¿No encuentras tu pregunta? <a class="font-semibold text-teal-700 underline underline-offset-4" href={`${base}/contacto`}>Escríbenos o llámanos</a>.
+        La información de este sitio no reemplaza una evaluación médica individual.
+      </p>
+    </div>
+  </section>
+</Base>

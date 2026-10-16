@@ -28,7 +28,17 @@ const year = new Date().getFullYear();
       <h2 class="!font-sans text-sm font-semibold uppercase tracking-[0.14em] !text-teal-300">Enlaces</h2>
       <ul class="mt-3 space-y-2">
         <li><a class="underline-offset-4 hover:underline" href={`${base}/cita`}>Solicitar cita</a></li>
-        <li><a class="underline-offset-4 hover:underline" href={`${base}/#contacto`}>Contacto y ubicación</a></li>
+        <li><a class="underline-offset-4 hover:underline" href={`${base}/servicios`}>Servicios</a></li>
+        <li><a class="underline-offset-4 hover:underline" href={`${base}/doctor`}>El doctor</a></li>
+        <li><a class="underline-offset-4 hover:underline" href={`${base}/preguntas`}>Preguntas frecuentes</a></li>
+        <li><a class="underline-offset-4 hover:underline" href={`${base}/contacto`}>Contacto y ubicación</a></li>
+        {CLINIC.social.facebook && (
+          <li>
+            <a class="underline-offset-4 hover:underline" href={CLINIC.social.facebook} target="_blank" rel="noopener noreferrer">
+              Facebook<span class="sr-only"> (se abre en una pestaña nueva)</span>
+            </a>
+          </li>
+        )}
         <li><a class="underline-offset-4 hover:underline" href={`${base}/privacidad`}>Política de privacidad</a></li>
       </ul>
     </div>

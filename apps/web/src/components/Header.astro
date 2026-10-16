@@ -3,18 +3,14 @@ import { Image } from "astro:assets";
 import logo from "../assets/logo.png";
 import MobileNav from "./MobileNav.tsx";
 
-interface Props {
-  current?: string;
-}
-const { current } = Astro.props;
-
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const links = [
-  { href: `${base}/#especialidades`, label: "Especialidades" },
-  { href: `${base}/#doctor`, label: "El doctor" },
-  { href: `${base}/#como-funciona`, label: "Cómo pedir cita" },
-  { href: `${base}/#contacto`, label: "Contacto" },
+  { href: `${base}/servicios`, label: "Servicios" },
+  { href: `${base}/doctor`, label: "El doctor" },
+  { href: `${base}/preguntas`, label: "Preguntas" },
+  { href: `${base}/contacto`, label: "Contacto" },
 ];
+const here = Astro.url.pathname.replace(/\/$/, "");
 const cta = `${base}/cita`;
 ---
 
@@ -34,7 +30,7 @@ const cta = `${base}/cita`;
           <a
             href={l.href}
             class="text-[0.95rem] font-medium text-ink-soft hover:text-teal-700"
-            aria-current={current === l.href ? "page" : undefined}
+            aria-current={here === l.href ? "page" : undefined}
           >
             {l.label}
           </a>

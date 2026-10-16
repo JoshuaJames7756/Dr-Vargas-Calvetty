@@ -41,6 +41,12 @@ Pantallas: Hoy, Solicitudes, Agenda y Disponibilidad. Las acciones salen de las 
 - Las notas clínicas son solo del doctor (la asistente recibe 403 en el servidor). Cada lectura se registra en la auditoría sin copiar el contenido. Son de solo inserción: una corrección crea una nota nueva y conserva la anterior.
 - Migración: archivo `sql/003_pacientes_y_notas.sql`, para pegar en el SQL Editor de Neon (ver `sql/LEEME.md`). Pruebas con Postgres real: `TEST_DATABASE_URL=... pnpm --filter @dr-vargas/api test` contra una base de pruebas vacía con las migraciones aplicadas, nunca la de producción.
 
+## Sitio público de demostración
+
+- Páginas: inicio, `/servicios`, `/doctor`, `/preguntas`, `/contacto`, `/cita`, `/privacidad`.
+- Los textos y fotos de ejemplo (biografía, formación, galería, servicios de Mastología, preguntas médicas) van dentro de recuadros «Ejemplo» (`Sample.astro`, `PhotoPlaceholder.astro`). Solo se ven con `PUBLIC_SHOW_PENDING=true`; en producción (`false`) no se publica ninguno.
+- Datos reales editables en `packages/shared/src/clinic.ts` (teléfonos, dirección, horario provisional, Facebook), `apps/web/src/data/services.ts` y `apps/web/src/data/faq.ts`.
+
 ## Recordatorios por WhatsApp
 
 - Pantalla **Recordatorios**: citas confirmadas de un día (por defecto mañana) con un botón que abre WhatsApp (`wa.me`) con el mensaje escrito. Abrirlo no envía nada: el personal decide.
