@@ -1,7 +1,7 @@
 import { UserButton } from "@clerk/clerk-react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "motion/react";
-import { CalendarDays, CalendarOff, Inbox, Sun, Users } from "lucide-react";
+import { BellRing, CalendarDays, CalendarOff, Inbox, Sun, Users } from "lucide-react";
 import { NavLink, Outlet, useLocation } from "react-router";
 import logo from "../assets/logo.png";
 import { useApi } from "../lib/api";
@@ -10,6 +10,7 @@ const NAV = [
   { to: "/", label: "Hoy", icon: Sun, end: true },
   { to: "/solicitudes", label: "Solicitudes", icon: Inbox, end: false, badge: true },
   { to: "/agenda", label: "Agenda", icon: CalendarDays, end: false },
+  { to: "/recordatorios", label: "Recordatorios", icon: BellRing, end: false },
   { to: "/pacientes", label: "Pacientes", icon: Users, end: false },
   { to: "/disponibilidad", label: "Disponibilidad", icon: CalendarOff, end: false },
 ] as const;

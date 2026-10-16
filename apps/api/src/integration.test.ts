@@ -14,7 +14,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Db } from "./db/client";
 import * as schema from "./db/schema";
 import { AppError } from "./lib/errors";
-import { changeAppointmentStatus } from "./modules/appointments/service";
+import { changeAppointmentStatus, setReminderSent } from "./modules/appointments/service";
 import { addNote, linkAppointmentToPatient, listNotes, searchPatients } from "./modules/patients/service";
 
 const url = process.env.TEST_DATABASE_URL;
@@ -127,5 +127,18 @@ describe.skipIf(!url)("integracion con PostgreSQL real", () => {
     const logs = await db.select().from(schema.auditLog).where(eq(schema.auditLog.entityId, patientId));
     expect(logs.some((l) => l.action === "patient.notes.read")).toBe(true);
     expect(JSON.stringify(logs)).not.toContain("CONTENIDO-SECRETO-XYZ");
+  });
+
+  it("recordatorio: solo aplica a citas confirmadas y se puede marcar y desmarcar", async () => {
+    const pending = await mkAppt("2031-03-04T14:00:00Z", "PENDING", "70033331", "Recordar Pendiente");
+    expect(await code(setReminderSent(db, pending, true, staffId))).toBe("NOT_CONFIRMED");
+
+    const confirmed = await mkAppt("2031-03-04T15:00:00Z", "CONFIRMED", "70033332", "Recordar Confirmada");
+    const on = await setReminderSent(db, confirmed, true, staffId);
+    expect(on?.reminderSentAt).toBeInstanceOf(Date);
+    const off = await setReminderSent(db, confirmed, false, staffId);
+    expect(off?.reminderSentAt).toBeNull();
+
+    expect(await code(setReminderSent(db, "00000000-0000-4000-8000-000000000000", true, staffId))).toBe("NOT_FOUND");
   });
 });

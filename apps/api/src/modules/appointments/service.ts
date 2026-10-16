@@ -83,6 +83,7 @@ export async function listAppointments(db: Db, opts: { status?: AppointmentStatu
       requesterPhone: appointments.requesterPhone,
       reason: appointments.reason,
       patientId: appointments.patientId,
+      reminderSentAt: appointments.reminderSentAt,
       version: appointments.version,
       serviceId: appointments.serviceId,
       serviceName: services.name,
@@ -226,4 +227,27 @@ async function findOrCreatePatient(tx: Tx, fullName: string, phone: string): Pro
   const [created] = await tx.insert(patients).values({ fullName, phone }).returning({ id: patients.id });
   if (!created) throw new Error("No se pudo crear el paciente");
   return created.id;
+}
+
+/** Marca (o desmarca) que el recordatorio por WhatsApp ya se envio. Solo aplica a citas confirmadas. */
+export async function setReminderSent(db: Db, id: string, sent: boolean, actorStaffId: string) {
+  return db.transaction(async (tx) => {
+    const [appt] = await tx.select({ status: appointments.status }).from(appointments).where(eq(appointments.id, id)).for("update").limit(1);
+    if (!appt) throw notFound("Cita no encontrada");
+    if (appt.status !== "CONFIRMED") throw conflict("NOT_CONFIRMED", "Solo se registran recordatorios de citas confirmadas.");
+
+    const [updated] = await tx
+      .update(appointments)
+      .set({ reminderSentAt: sent ? new Date() : null })
+      .where(eq(appointments.id, id))
+      .returning({ id: appointments.id, reminderSentAt: appointments.reminderSentAt });
+    await audit(tx, {
+      actorType: "staff",
+      actorId: actorStaffId,
+      action: sent ? "appointment.reminder_marked_sent" : "appointment.reminder_unmarked",
+      entityType: "appointment",
+      entityId: id,
+    });
+    return updated;
+  });
 }

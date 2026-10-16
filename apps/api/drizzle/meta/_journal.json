@@ -22,6 +22,13 @@
       "when": 1792107422310,
       "tag": "0002_patients_and_notes",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792128730263,
+      "tag": "0003_recordatorios",
+      "breakpoints": true
     }
   ]
 }

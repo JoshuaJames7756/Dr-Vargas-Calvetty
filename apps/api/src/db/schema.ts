@@ -131,6 +131,8 @@ export const appointments = pgTable(
     /** Motivo breve opcional. Informacion minima; no diagnosticos. */
     reason: text("reason"),
     rescheduledToId: uuid("rescheduled_to_id"),
+    /** Cuando el personal marco que ya envio el recordatorio por WhatsApp. null = sin recordar. */
+    reminderSentAt: timestamp("reminder_sent_at", { withTimezone: true }),
     /** Control de concurrencia optimista. */
     version: integer("version").notNull().default(1),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

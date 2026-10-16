@@ -6,9 +6,10 @@ Se pegan en el SQL Editor de Neon (Branch correcta, base `neondb`) y se ejecutan
 |---|---|---|
 | 1 | `001_inicial.sql` | Ya aplicada en tu Neon. No repetir. |
 | 2 | `002_restricciones.sql` | Ya aplicada en tu Neon. No repetir. |
-| 3 | `003_pacientes_y_notas.sql` | **Nueva. Ejecutar una sola vez.** |
+| 3 | `003_pacientes_y_notas.sql` | Ya aplicada en tu Neon. No repetir. |
+| 4 | `004_recordatorios.sql` | **Nueva. Ejecutar una sola vez.** |
 
-Las dos primeras estan solo como referencia, por si un dia hay que crear una base nueva desde cero (en ese caso se ejecutan en orden 001, 002, 003 y luego se cargan los servicios).
+Las dos primeras estan solo como referencia, por si un dia hay que crear una base nueva desde cero (en ese caso se ejecutan en orden 001, 002, 003, 004 y luego se cargan los servicios).
 
 ## Herramientas (se usan cuando haga falta)
 

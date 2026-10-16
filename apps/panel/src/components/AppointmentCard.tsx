@@ -57,6 +57,9 @@ export default function AppointmentCard({ appt, showDay = false }: { appt: Appoi
           </p>
           <p className="mt-1 text-lg font-semibold">{appt.requesterName}</p>
           <p className="text-ink-soft">{appt.serviceName}</p>
+          {appt.status === "CONFIRMED" && appt.reminderSentAt && (
+            <p className="mt-1 text-sm font-semibold text-teal-700">Recordatorio enviado ({fmtDay(appt.reminderSentAt)} {fmtTime(appt.reminderSentAt)})</p>
+          )}
         </div>
         <StatusBadge status={appt.status} />
       </div>

@@ -39,11 +39,17 @@ Pantallas: Hoy, Solicitudes, Agenda y Disponibilidad. Las acciones salen de las 
 
 - Pantalla Pacientes: búsqueda por nombre o teléfono, ficha, historial de citas. Desde una cita confirmada, «Crear ficha» crea el paciente (o reutiliza uno con el mismo teléfono).
 - Las notas clínicas son solo del doctor (la asistente recibe 403 en el servidor). Cada lectura se registra en la auditoría sin copiar el contenido. Son de solo inserción: una corrección crea una nota nueva y conserva la anterior.
-- Migración: `pnpm db:migrate` (aplica la 0002). Pruebas con Postgres real: `TEST_DATABASE_URL=... pnpm --filter @dr-vargas/api test` contra una base de pruebas vacía con las migraciones aplicadas, nunca la de producción.
+- Migración: archivo `sql/003_pacientes_y_notas.sql`, para pegar en el SQL Editor de Neon (ver `sql/LEEME.md`). Pruebas con Postgres real: `TEST_DATABASE_URL=... pnpm --filter @dr-vargas/api test` contra una base de pruebas vacía con las migraciones aplicadas, nunca la de producción.
+
+## Recordatorios por WhatsApp
+
+- Pantalla **Recordatorios**: citas confirmadas de un día (por defecto mañana) con un botón que abre WhatsApp (`wa.me`) con el mensaje escrito. Abrirlo no envía nada: el personal decide.
+- «Ya lo envié» guarda `reminder_sent_at` en la cita (migración `sql/004_recordatorios.sql`), queda en la auditoría y se muestra también en la tarjeta de la cita. Se puede desmarcar.
+- Sin costo: no usa la API de WhatsApp Business ni envía mensajes automáticos.
 
 ## Variables de entorno
 
-Copia `.env.example` y reparte los valores:
+Los valores reales van en estos archivos locales (no hay `.env.example` en la raíz):
 
 - **`apps/api/.dev.vars`** (local, ignorado por Git): `DATABASE_URL`, `CLERK_SECRET_KEY`, `CLERK_PUBLISHABLE_KEY`, `TURNSTILE_SECRET_KEY`, `ALLOWED_ORIGIN`, `CLINIC_TIMEZONE`.
 - **`apps/web/.env`** (local): `PUBLIC_TURNSTILE_SITE_KEY`, `PUBLIC_API_URL=http://localhost:8787`, `PUBLIC_SHOW_PENDING=true`.

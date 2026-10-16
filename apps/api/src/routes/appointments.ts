@@ -4,7 +4,7 @@ import { z } from "zod";
 import { APPOINTMENT_STATUSES, changeStatusSchema, linkPatientSchema } from "@dr-vargas/shared";
 import type { AppEnv } from "../env";
 import { linkAppointmentToPatient } from "../modules/patients/service";
-import { changeAppointmentStatus, listAppointments, rescheduleAppointment } from "../modules/appointments/service";
+import { changeAppointmentStatus, listAppointments, rescheduleAppointment, setReminderSent } from "../modules/appointments/service";
 
 /** Rutas privadas: el middleware requireStaff se aplica al montar este router (ver index.ts). */
 export const appointmentRoutes = new Hono<AppEnv>();
@@ -65,5 +65,17 @@ appointmentRoutes.post(
     const { patientId } = c.req.valid("json");
     const result = await linkAppointmentToPatient(c.get("db"), id, patientId, c.get("staff").id);
     return c.json(result, result.created ? 201 : 200);
+  },
+);
+
+appointmentRoutes.post(
+  "/:id/reminder",
+  zValidator("param", z.object({ id: z.string().uuid() })),
+  zValidator("json", z.object({ sent: z.boolean() })),
+  async (c) => {
+    const { id } = c.req.valid("param");
+    const { sent } = c.req.valid("json");
+    const appointment = await setReminderSent(c.get("db"), id, sent, c.get("staff").id);
+    return c.json({ appointment });
   },
 );

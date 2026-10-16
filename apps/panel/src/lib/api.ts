@@ -23,6 +23,8 @@ export interface AppointmentDto {
   requesterPhone: string;
   reason: string | null;
   patientId: string | null;
+  /** Cuando el personal marco el recordatorio como enviado (null = sin recordar). */
+  reminderSentAt: string | null;
   version: number;
   serviceId: string;
   serviceName: string;
@@ -125,6 +127,8 @@ export function useApi() {
       request<{ appointment: AppointmentDto }>(`/api/appointments/${id}/status`, { method: "PATCH", body: JSON.stringify({ to, note }) }),
     reschedule: (id: string, startsAt: string, note?: string) =>
       request<{ appointment: AppointmentDto }>(`/api/appointments/${id}/reschedule`, { method: "POST", body: JSON.stringify({ startsAt, note }) }),
+    setReminder: (id: string, sent: boolean) =>
+      request<{ appointment: { id: string; reminderSentAt: string | null } }>(`/api/appointments/${id}/reminder`, { method: "POST", body: JSON.stringify({ sent }) }),
     slots: (serviceId: string, date: string) =>
       request<{ slots: SlotDto[] }>(`/api/public/availability?serviceId=${serviceId}&date=${date}`).then((r) => r.slots),
     getAvailability: () => request<{ days: DayConfig[]; exceptions: ExceptionDto[] }>("/api/availability"),
