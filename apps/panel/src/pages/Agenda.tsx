@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import PageHeader from "../components/PageHeader";
 import AppointmentCard from "../components/AppointmentCard";
 import { Empty, ErrorState, Loading } from "../components/States";
 import { useApi, type AppointmentDto } from "../lib/api";
@@ -25,27 +27,38 @@ export default function Agenda() {
 
   return (
     <div>
-      <h1 className="text-3xl sm:text-4xl">Agenda</h1>
-      <div className="mt-5 flex flex-wrap items-end gap-3">
-        <div>
-          <label htmlFor="ag-start" className="block text-sm font-semibold">
-            Desde
-          </label>
-          <input id="ag-start" type="date" className="field" value={start} onChange={(e) => e.target.value && setStart(e.target.value)} />
+      <PageHeader title="Agenda" description="Citas confirmadas y pendientes del rango elegido. Las canceladas y rechazadas no se muestran." />
+      <div className="card mt-5 flex flex-wrap items-end justify-between gap-x-6 gap-y-4 p-4">
+        <div className="flex flex-wrap items-end gap-2">
+          <button type="button" className="btn btn-outline" aria-label={`Anterior, ${days} días atrás`} onClick={() => setStart(addDays(start, -days))}>
+            <ChevronLeft aria-hidden size={18} /> Anterior
+          </button>
+          <div>
+            <label htmlFor="ag-start" className="block text-sm font-semibold">
+              Desde
+            </label>
+            <input id="ag-start" type="date" className="field" value={start} onChange={(e) => e.target.value && setStart(e.target.value)} />
+          </div>
+          <button type="button" className="btn btn-outline" aria-label={`Siguiente, ${days} días adelante`} onClick={() => setStart(addDays(start, days))}>
+            Siguiente <ChevronRight aria-hidden size={18} />
+          </button>
+          <button type="button" className="btn btn-outline" onClick={() => setStart(todayLocal())} disabled={start === todayLocal()}>
+            Hoy
+          </button>
         </div>
-        <div role="group" aria-label="Rango" className="flex gap-2">
+        <div role="group" aria-label="Rango" className="inline-flex rounded-full bg-teal-50 p-1">
           {RANGES.map((r) => (
-            <button key={r.days} type="button" aria-pressed={days === r.days} onClick={() => setDays(r.days)} className={`btn ${days === r.days ? "btn-primary" : "btn-outline"}`}>
+            <button
+              key={r.days}
+              type="button"
+              aria-pressed={days === r.days}
+              onClick={() => setDays(r.days)}
+              className={`min-h-10 rounded-full px-4 text-sm font-semibold transition-colors ${days === r.days ? "bg-teal-700 text-white" : "text-teal-800 hover:bg-teal-100"}`}
+            >
               {r.label}
             </button>
           ))}
         </div>
-        <button type="button" className="btn btn-outline" onClick={() => setStart(addDays(start, -days))}>
-          Anterior
-        </button>
-        <button type="button" className="btn btn-outline" onClick={() => setStart(addDays(start, days))}>
-          Siguiente
-        </button>
       </div>
 
       <div className="mt-6 space-y-8">

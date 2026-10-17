@@ -41,6 +41,12 @@ Pantallas: Hoy, Solicitudes, Agenda y Disponibilidad. Las acciones salen de las 
 - Las notas clínicas son solo del doctor (la asistente recibe 403 en el servidor). Cada lectura se registra en la auditoría sin copiar el contenido. Son de solo inserción: una corrección crea una nota nueva y conserva la anterior.
 - Migración: archivo `sql/003_pacientes_y_notas.sql`, para pegar en el SQL Editor de Neon (ver `sql/LEEME.md`). Pruebas con Postgres real: `TEST_DATABASE_URL=... pnpm --filter @dr-vargas/api test` contra una base de pruebas vacía con las migraciones aplicadas, nunca la de producción.
 
+## Diseño y movimiento
+
+- Sitio: las secciones aparecen con una entrada suave al hacer scroll (`data-reveal`, script en `Base.astro`) y el hero al cargar (`.rise`). Todo se desactiva con «reducir movimiento» del sistema y sin JavaScript el contenido se ve completo.
+- Contacto con mapa (Google Maps incrustado, sin clave) solo en inicio y `/contacto`; las demás páginas usan `CtaBand` y el pie muestra la dirección solo donde no hay sección de contacto.
+- Panel: `PageHeader` unifica los encabezados; hay acceso «Ver sitio web» en el menú, y el sitio enlaza «Acceso del consultorio» en el pie.
+
 ## SEO y página 404
 
 - `robots.txt` se genera solo: con `PUBLIC_SHOW_PENDING=true` bloquea todo y las páginas llevan `noindex`; en producción permite el sitio, excluye `/panel/` y `/api/` e indica el sitemap con el dominio de `PUBLIC_SITE_URL`.

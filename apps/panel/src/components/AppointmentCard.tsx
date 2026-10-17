@@ -39,6 +39,9 @@ export default function AppointmentCard({ appt, showDay = false }: { appt: Appoi
       qc.invalidateQueries({ queryKey: ["appointments"] });
     },
   });
+  // Lo que decide va al final y a la derecha: primero lo destructivo, luego lo neutro, al final la accion principal.
+  const order = { danger: 0, outline: 1, primary: 2 } as const;
+  const actions = [...actionsFor(appt.status)].sort((x, y) => order[x.tone] - order[y.tone]);
   const canHavePatient = appt.status === "CONFIRMED" || appt.status === "COMPLETED";
 
   const run = (a: ActionDef) => {
@@ -71,30 +74,36 @@ export default function AppointmentCard({ appt, showDay = false }: { appt: Appoi
         </p>
       )}
 
-      <div className="mt-4 flex flex-wrap items-center gap-2">
-        <a className="btn btn-outline" href={`tel:+591${appt.requesterPhone.replace(/\D/g, "").replace(/^591/, "")}`} aria-label={`Llamar a ${appt.requesterName}`}>
-          <Phone aria-hidden size={16} /> {appt.requesterPhone}
-        </a>
-        <a className="btn btn-whatsapp" href={patientWhatsappLink(appt.requesterPhone, whatsappText(appt))} target="_blank" rel="noopener noreferrer">
-          <MessageCircle aria-hidden size={16} /> {appt.status === "CONFIRMED" ? "Avisar por WhatsApp" : "WhatsApp"}
-          <span className="sr-only"> (abre WhatsApp, no envía el mensaje)</span>
-        </a>
-        {canHavePatient &&
-          (appt.patientId ? (
-            <Link className="btn btn-outline" to={`/pacientes/${appt.patientId}`}>
-              <UserRound aria-hidden size={16} /> Ver paciente
-            </Link>
-          ) : (
-            <button type="button" className="btn btn-outline" disabled={link.isPending} onClick={() => link.mutate()}>
-              {link.isPending ? <Loader2 aria-hidden size={16} className="animate-spin" /> : <UserRound aria-hidden size={16} />} Crear ficha
-            </button>
-          ))}
-        {actionsFor(appt.status).map((a) => (
-          <button key={a.key} type="button" className={`btn btn-${a.tone}`} disabled={busy} onClick={() => run(a)}>
-            {busy && changeStatus.variables?.to === a.to ? <Loader2 aria-hidden size={16} className="animate-spin" /> : null}
-            {a.label}
-          </button>
-        ))}
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-t border-line pt-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <a className="btn btn-outline btn-sm" href={`tel:+591${appt.requesterPhone.replace(/\D/g, "").replace(/^591/, "")}`} aria-label={`Llamar a ${appt.requesterName}`}>
+            <Phone aria-hidden size={15} /> {appt.requesterPhone}
+          </a>
+          <a className="btn btn-whatsapp btn-sm" href={patientWhatsappLink(appt.requesterPhone, whatsappText(appt))} target="_blank" rel="noopener noreferrer">
+            <MessageCircle aria-hidden size={15} /> {appt.status === "CONFIRMED" ? "Avisar por WhatsApp" : "WhatsApp"}
+            <span className="sr-only"> (abre WhatsApp, no envía el mensaje)</span>
+          </a>
+          {canHavePatient &&
+            (appt.patientId ? (
+              <Link className="btn btn-outline btn-sm" to={`/pacientes/${appt.patientId}`}>
+                <UserRound aria-hidden size={15} /> Ver paciente
+              </Link>
+            ) : (
+              <button type="button" className="btn btn-outline btn-sm" disabled={link.isPending} onClick={() => link.mutate()}>
+                {link.isPending ? <Loader2 aria-hidden size={15} className="animate-spin" /> : <UserRound aria-hidden size={15} />} Crear ficha
+              </button>
+            ))}
+        </div>
+        {actions.length > 0 && (
+          <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:justify-end">
+            {actions.map((a) => (
+              <button key={a.key} type="button" className={`btn btn-sm btn-${a.tone} flex-1 sm:flex-none`} disabled={busy} onClick={() => run(a)}>
+                {busy && changeStatus.variables?.to === a.to ? <Loader2 aria-hidden size={15} className="animate-spin" /> : null}
+                {a.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <Dialog open={!!pending} title={pending?.label ?? ""} onClose={() => setPending(null)}>

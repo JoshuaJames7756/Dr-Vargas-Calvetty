@@ -1,10 +1,8 @@
 ---
-import { CalendarCheck } from "lucide-react";
-import ContactSection from "../components/ContactSection.astro";
+import CtaBand from "../components/CtaBand.astro";
 import ServiceGroups from "../components/ServiceGroups.astro";
 import Base from "../layouts/Base.astro";
 
-const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
 <Base
@@ -12,7 +10,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
   description="Servicios del consultorio del Dr. Rolando Vargas Calvetty en Cochabamba: ginecología y obstetricia, oncología y mastología."
   path="/servicios"
 >
-  <section class="py-12 md:py-20">
+  <section class="pb-2 pt-12 md:pb-4 md:pt-20">
     <div class="container-page">
       <p class="eyebrow">Especialidades y servicios</p>
       <h1 class="mt-3 max-w-3xl text-4xl sm:text-5xl">Cuidado integral, desde el control hasta el tratamiento</h1>
@@ -22,10 +20,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
       <div class="mt-10">
         <ServiceGroups />
       </div>
-      <div class="mt-10">
-        <a href={`${base}/cita`} class="btn btn-primary"><CalendarCheck aria-hidden="true" size={20} /> Solicitar cita</a>
-      </div>
     </div>
   </section>
-  <ContactSection />
+  <CtaBand />
 </Base>

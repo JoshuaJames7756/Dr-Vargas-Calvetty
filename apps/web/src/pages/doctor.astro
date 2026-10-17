@@ -1,14 +1,13 @@
 ---
 import { Image } from "astro:assets";
-import { Award, Building2, CalendarCheck, GraduationCap } from "lucide-react";
+import { Award, Building2, GraduationCap } from "lucide-react";
 import { CLINIC } from "@dr-vargas/shared";
 import doctorPhoto from "../assets/doctor-provisional.jpg";
-import ContactSection from "../components/ContactSection.astro";
+import CtaBand from "../components/CtaBand.astro";
 import PhotoPlaceholder from "../components/PhotoPlaceholder.astro";
 import Sample from "../components/Sample.astro";
 import Base from "../layouts/Base.astro";
 
-const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const blocks = [
   { icon: GraduationCap, title: "Formación", lines: ["[Universidad, ciudad, año]", "[Especialidad, institución, año]", "[Subespecialidad, institución, año]"] },
   { icon: Building2, title: "Trayectoria", lines: ["[Hospital o clínica, años]", "[Cargo o área de trabajo]"] },
@@ -59,10 +58,6 @@ const blocks = [
             }
           </div>
         </Sample>
-
-        <div class="mt-8">
-          <a href={`${base}/cita`} class="btn btn-primary"><CalendarCheck aria-hidden="true" size={20} /> Solicitar cita</a>
-        </div>
       </div>
     </div>
   </section>
@@ -80,5 +75,5 @@ const blocks = [
       </Sample>
     </div>
   </section>
-  <ContactSection />
+  <CtaBand />
 </Base>

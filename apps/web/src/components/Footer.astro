@@ -3,43 +3,65 @@ import { Image } from "astro:assets";
 import { CLINIC } from "@dr-vargas/shared";
 import logoLight from "../assets/logo-light.png";
 
+interface Props {
+  /** Si la pagina ya muestra la seccion de contacto, el pie no repite direccion ni telefonos. */
+  contactInPage?: boolean;
+}
+const { contactInPage = false } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const year = new Date().getFullYear();
+const a = "underline-offset-4 hover:text-white hover:underline";
 ---
 
 <footer class="on-dark bg-teal-950 text-teal-100">
-  <div class="container-page grid gap-10 py-14 md:grid-cols-[1.2fr_1fr_1fr]">
+  <div class:list={["container-page grid gap-10 py-12", contactInPage ? "md:grid-cols-[1.4fr_1fr]" : "md:grid-cols-[1.2fr_1fr_1fr]"]}>
     <div>
       <Image src={logoLight} alt="" width={96} height={61} class="mb-4 h-14 w-auto" />
       <p class="font-display text-xl text-white">{CLINIC.doctorName}</p>
       <p class="mt-1 text-teal-200">{CLINIC.specialties.join(" · ")}</p>
     </div>
 
-    <div>
-      <h2 class="!font-sans text-sm font-semibold uppercase tracking-[0.14em] !text-teal-300">Consultorio</h2>
-      <address class="mt-3 not-italic text-teal-100">
-        {CLINIC.address.line1}<br />
-        {CLINIC.address.line2}<br />
-        {CLINIC.address.city}
-      </address>
-    </div>
+    {
+      !contactInPage && (
+        <div>
+          <h2 class="!font-sans text-sm font-semibold uppercase tracking-[0.14em] !text-teal-300">Consultorio</h2>
+          <address class="mt-3 not-italic text-teal-100">
+            {CLINIC.address.line1}<br />
+            {CLINIC.address.line2}<br />
+            {CLINIC.address.city}
+          </address>
+          <p class="mt-3">
+            {CLINIC.phones.landlines.map((p) => (
+              <>
+                <a class={a} href={`tel:+591${p}`}>{p}</a>
+                {" · "}
+              </>
+            ))}
+            <a class={a} href={`tel:+${CLINIC.whatsappCountryCode}${CLINIC.phones.whatsapp}`}>{CLINIC.phones.whatsapp}</a>
+          </p>
+          <p class="mt-1 text-teal-200">{CLINIC.hours.label}</p>
+        </div>
+      )
+    }
 
     <div>
       <h2 class="!font-sans text-sm font-semibold uppercase tracking-[0.14em] !text-teal-300">Enlaces</h2>
-      <ul class="mt-3 space-y-2">
-        <li><a class="underline-offset-4 hover:underline" href={`${base}/cita`}>Solicitar cita</a></li>
-        <li><a class="underline-offset-4 hover:underline" href={`${base}/servicios`}>Servicios</a></li>
-        <li><a class="underline-offset-4 hover:underline" href={`${base}/doctor`}>El doctor</a></li>
-        <li><a class="underline-offset-4 hover:underline" href={`${base}/preguntas`}>Preguntas frecuentes</a></li>
-        <li><a class="underline-offset-4 hover:underline" href={`${base}/contacto`}>Contacto y ubicación</a></li>
-        {CLINIC.social.facebook && (
-          <li>
-            <a class="underline-offset-4 hover:underline" href={CLINIC.social.facebook} target="_blank" rel="noopener noreferrer">
-              Facebook<span class="sr-only"> (se abre en una pestaña nueva)</span>
-            </a>
-          </li>
-        )}
-        <li><a class="underline-offset-4 hover:underline" href={`${base}/privacidad`}>Política de privacidad</a></li>
+      <ul class="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 md:grid-cols-1">
+        <li><a class={a} href={`${base}/cita`}>Solicitar cita</a></li>
+        <li><a class={a} href={`${base}/servicios`}>Servicios</a></li>
+        <li><a class={a} href={`${base}/doctor`}>El doctor</a></li>
+        <li><a class={a} href={`${base}/preguntas`}>Preguntas frecuentes</a></li>
+        <li><a class={a} href={`${base}/contacto`}>Contacto y ubicación</a></li>
+        {
+          CLINIC.social.facebook && (
+            <li>
+              <a class={a} href={CLINIC.social.facebook} target="_blank" rel="noopener noreferrer">
+                Facebook<span class="sr-only"> (se abre en una pestaña nueva)</span>
+              </a>
+            </li>
+          )
+        }
+        <li><a class={a} href={`${base}/privacidad`}>Política de privacidad</a></li>
       </ul>
     </div>
   </div>
@@ -48,10 +70,12 @@ const year = new Date().getFullYear();
     <div class="container-page flex flex-col gap-2 py-5 text-sm text-teal-200 sm:flex-row sm:items-center sm:justify-between">
       <p>© {year} {CLINIC.doctorName}. Todos los derechos reservados.</p>
       <p>
-        Sitio desarrollado por
+        Sitio desarrollado por{" "}
         <a class="underline underline-offset-4 hover:text-white" href={CLINIC.developer.url} target="_blank" rel="noopener noreferrer">
           {CLINIC.developer.name}<span class="sr-only"> (se abre en una pestaña nueva)</span>
         </a>
+        <span aria-hidden="true"> · </span>
+        <a class="underline-offset-4 hover:text-white hover:underline" href="/panel/">Acceso del consultorio</a>
       </p>
     </div>
     <p class="container-page pb-6 text-xs text-teal-300">

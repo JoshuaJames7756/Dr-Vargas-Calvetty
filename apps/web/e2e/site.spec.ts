@@ -87,6 +87,26 @@ test.describe("sitio publico", () => {
     await expect(page.getByRole("link", { name: /Página del consultorio/ })).toHaveAttribute("href", "https://www.facebook.com/ginecologocochabamba/");
   });
 
+  test("contacto: mapa visible y el pie no repite la direccion", async ({ page }) => {
+    await page.goto("/contacto/");
+    await expect(page.locator('iframe[title^="Mapa"]')).toBeAttached();
+    await expect(page.getByRole("link", { name: /Abrir en Google Maps/ })).toBeVisible();
+    await expect(page.locator("footer address")).toHaveCount(0);
+    await page.goto("/servicios/");
+    await expect(page.locator("footer address")).toHaveCount(1);
+    await expect(page.locator('iframe[title^="Mapa"]')).toHaveCount(0);
+  });
+
+  test.describe("movimiento", () => {
+    test.use({ reducedMotion: "no-preference" });
+    test("los bloques aparecen al hacer scroll y se ven todos al llegar al final", async ({ page }) => {
+      await page.goto("/");
+      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+      await expect.poll(() => page.locator("[data-reveal]:not(.is-in)").count()).toBeLessThan(3);
+      await expect(page.getByRole("heading", { name: "Visita el consultorio o escríbenos" })).toBeVisible();
+    });
+  });
+
   test("las preguntas frecuentes se abren y se cierran", async ({ page }) => {
     await page.goto("/preguntas/");
     const q = page.getByText("¿Necesito crear una cuenta para pedir una cita?");

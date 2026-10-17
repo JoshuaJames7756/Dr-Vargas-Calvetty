@@ -7,7 +7,7 @@ export default defineConfig({
   fullyParallel: true,
   retries: 0,
   reporter: [["list"]],
-  use: { baseURL: `http://localhost:${PORT}`, locale: "es-BO", timezoneId: "America/La_Paz" },
+  use: { baseURL: `http://localhost:${PORT}`, locale: "es-BO", timezoneId: "America/La_Paz", reducedMotion: "reduce" },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
     { name: "mobile", use: { ...devices["Pixel 7"] } },

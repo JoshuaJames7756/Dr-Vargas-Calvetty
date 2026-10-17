@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
 import AppointmentCard from "../components/AppointmentCard";
+import PageHeader from "../components/PageHeader";
 import { Empty, ErrorState, Loading } from "../components/States";
 import { useApi } from "../lib/api";
 import { capitalize, dayRangeUtc, fmtDay, fmtTime, todayLocal } from "../lib/time";
@@ -18,15 +19,15 @@ export default function Today() {
 
   return (
     <div className="space-y-10">
-      <header>
-        <p className="text-sm font-semibold uppercase tracking-[0.12em] text-teal-700">{capitalize(fmtDay(new Date().toISOString()))}</p>
-        <h1 className="mt-1 text-3xl sm:text-4xl">Hoy</h1>
-        {next && (
-          <p className="mt-2 text-lg text-ink-soft">
-            Próxima consulta: <strong className="text-ink">{next.requesterName}</strong> a las {fmtTime(next.startsAt)}.
-          </p>
-        )}
-      </header>
+      <PageHeader
+        title="Hoy"
+        eyebrow={capitalize(fmtDay(new Date().toISOString()))}
+        description={
+          next ? (
+            <>Próxima consulta: <strong className="text-ink">{next.requesterName}</strong> a las {fmtTime(next.startsAt)}.</>
+          ) : undefined
+        }
+      />
 
       <section aria-labelledby="h-pend">
         <div className="flex items-baseline justify-between gap-4">

@@ -1,3 +1,4 @@
+import PageHeader from "../components/PageHeader";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, Loader2, MessageCircle, Undo2 } from "lucide-react";
 import { useState } from "react";
@@ -27,12 +28,7 @@ export default function Reminders() {
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="text-3xl sm:text-4xl">Recordatorios</h1>
-        <p className="mt-2 max-w-2xl text-ink-soft">
-          Avisa a cada paciente por WhatsApp un día antes. El botón abre WhatsApp con el mensaje escrito; tú decides si lo envías. Después marca la cita como recordada para no repetir ni olvidar a nadie.
-        </p>
-      </header>
+      <PageHeader title="Recordatorios" description="Avisa a cada paciente por WhatsApp un día antes. El botón abre WhatsApp con el mensaje escrito; tú decides si lo envías. Después marca la cita como recordada para no repetir ni olvidar a nadie." />
 
       <section aria-labelledby="h-day" className="space-y-3">
         <h2 id="h-day" className="text-xl">

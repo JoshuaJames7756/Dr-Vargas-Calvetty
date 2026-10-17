@@ -1,7 +1,7 @@
 import { UserButton } from "@clerk/clerk-react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "motion/react";
-import { BellRing, CalendarDays, CalendarOff, Inbox, Sun, Users } from "lucide-react";
+import { BellRing, CalendarDays, CalendarOff, Globe, Inbox, Sun, Users } from "lucide-react";
 import { NavLink, Outlet, useLocation } from "react-router";
 import logo from "../assets/logo.png";
 import { useApi } from "../lib/api";
@@ -56,9 +56,14 @@ export default function Shell() {
         <nav aria-label="Principal" className="mt-6 flex flex-col gap-1">
           {NAV.map((n) => link(n, false))}
         </nav>
-        <div className="mt-auto flex items-center gap-3 px-2 pt-6">
-          <UserButton />
-          <span className="text-sm text-teal-200">Tu cuenta</span>
+        <div className="mt-auto space-y-3 border-t border-teal-800 pt-4">
+          <a href="/" className="flex min-h-12 items-center gap-3 rounded-xl px-4 font-semibold text-teal-100 transition-colors hover:bg-teal-800">
+            <Globe aria-hidden size={20} /> Ver sitio web
+          </a>
+          <div className="flex items-center gap-3 px-4">
+            <UserButton />
+            <span className="text-sm text-teal-200">Tu cuenta</span>
+          </div>
         </div>
       </aside>
 
@@ -68,7 +73,12 @@ export default function Shell() {
             <img src={logo} alt="" className="h-8 w-auto" />
             <span className="font-display text-lg text-teal-900">Panel</span>
           </div>
-          <UserButton />
+          <div className="flex items-center gap-3">
+            <a href="/" className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-line bg-white px-3 text-sm font-semibold text-teal-800">
+              <Globe aria-hidden size={16} /> Sitio web
+            </a>
+            <UserButton />
+          </div>
         </header>
 
         <main className="flex-1 px-4 pb-28 pt-6 sm:px-8 md:pb-12 md:pt-10">

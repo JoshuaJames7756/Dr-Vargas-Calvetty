@@ -1,9 +1,10 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Search } from "lucide-react";
+import { ChevronRight, Plus, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 import Dialog from "../components/Dialog";
+import PageHeader from "../components/PageHeader";
 import PatientForm from "../components/PatientForm";
 import { Empty, ErrorState, Loading } from "../components/States";
 import { ApiError, useApi } from "../lib/api";
@@ -43,14 +44,17 @@ export default function Patients() {
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-3xl sm:text-4xl">Pacientes</h1>
-        <button type="button" className="btn btn-primary" onClick={() => setCreating(true)}>
-          <Plus aria-hidden size={18} /> Nuevo paciente
-        </button>
-      </div>
+      <PageHeader
+        title="Pacientes"
+        description="Busca por nombre o teléfono. Las fichas se crean desde una cita confirmada o con «Nuevo paciente»."
+        actions={
+          <button type="button" className="btn btn-primary" onClick={() => setCreating(true)}>
+            <Plus aria-hidden size={18} /> Nuevo paciente
+          </button>
+        }
+      />
 
-      <div className="relative mt-5 max-w-md">
+      <div className="relative mt-6 max-w-lg">
         <label htmlFor="pt-search" className="sr-only">
           Buscar por nombre o teléfono
         </label>
@@ -67,9 +71,13 @@ export default function Patients() {
           </Empty>
         )}
         {list.data?.patients.map((p) => (
-          <Link key={p.id} to={`/pacientes/${p.id}`} className="card flex items-center justify-between gap-3 px-4 py-3 hover:border-teal-500">
-            <span className="font-semibold">{p.fullName}</span>
+          <Link key={p.id} to={`/pacientes/${p.id}`} className="card card-link flex items-center gap-3 px-4 py-3">
+            <span aria-hidden className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-100 font-display text-lg text-teal-800">
+              {p.fullName.trim().charAt(0).toUpperCase()}
+            </span>
+            <span className="min-w-0 flex-1 truncate font-semibold">{p.fullName}</span>
             <span className="text-ink-soft">{p.phone}</span>
+            <ChevronRight aria-hidden size={18} className="shrink-0 text-teal-600" />
           </Link>
         ))}
         {list.data && (offset > 0 || list.data.hasMore) && (

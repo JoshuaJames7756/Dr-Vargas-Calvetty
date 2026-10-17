@@ -23,6 +23,7 @@ const steps = [
   title="Ginecólogo Oncólogo y Mastólogo en Cochabamba"
   description="Dr. Rolando Vargas Calvetty, ginecólogo oncólogo y mastólogo en Cochabamba, Bolivia. Conoce sus servicios y solicita tu cita en línea."
   path="/"
+  contactInPage
 >
   <!-- HERO -->
   <section class="on-dark relative isolate overflow-hidden bg-teal-900 text-teal-50">
@@ -36,16 +37,16 @@ const steps = [
     />
     <div class="container-page grid items-end gap-10 pb-0 pt-12 md:grid-cols-[1.15fr_0.85fr] md:pt-20">
       <div class="pb-12 md:pb-24">
-        <p class="eyebrow !text-teal-300">Cochabamba, Bolivia</p>
-        <h1 class="mt-4 text-[2.4rem] !leading-[1.05] !text-white sm:text-5xl lg:text-[3.6rem]">
+        <p class="eyebrow rise !text-teal-300">Cochabamba, Bolivia</p>
+        <h1 style="--d: 80ms" class="rise mt-4 text-[2.4rem] !leading-[1.05] !text-white sm:text-5xl lg:text-[3.6rem]">
           Dr. Rolando <span class="whitespace-nowrap">Vargas Calvetty</span>
         </h1>
-        <p class="mt-4 font-display text-xl text-teal-200 sm:text-2xl">Ginecólogo Oncólogo · Mastólogo</p>
-        <p class="mt-6 max-w-xl text-lg text-teal-100">
+        <p style="--d: 160ms" class="rise mt-4 font-display text-xl text-teal-200 sm:text-2xl">Ginecólogo Oncólogo · Mastólogo</p>
+        <p style="--d: 240ms" class="rise mt-6 max-w-xl text-lg text-teal-100">
           Atención médica especializada en la salud de la mujer. Consulta los servicios del consultorio y solicita tu cita
           sin crear una cuenta.
         </p>
-        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div style="--d: 320ms" class="rise mt-8 flex flex-col gap-3 sm:flex-row">
           <a href={`${base}/cita`} class="btn btn-light">
             <CalendarCheck aria-hidden="true" size={20} /> Solicitar cita
           </a>
@@ -62,7 +63,7 @@ const steps = [
       </div>
 
       <!-- FOTO PROVISIONAL: reemplazar por retrato profesional cuando exista (src/assets/doctor-provisional.jpg). -->
-      <div class="mx-auto w-full max-w-sm md:max-w-none">
+      <div style="--d: 200ms" class="rise mx-auto w-full max-w-sm md:max-w-none">
         <div class="hero-photo relative aspect-[9/10] w-full overflow-hidden rounded-t-[999px]">
           <Image
             src={doctorPhoto}
@@ -77,21 +78,21 @@ const steps = [
   </section>
 
   <!-- COMO FUNCIONA -->
-  <section id="como-funciona" class="scroll-mt-24 py-16 md:py-24">
+  <section id="como-funciona" class="scroll-mt-24 py-14 md:py-20">
     <div class="container-page">
-      <p class="eyebrow">Solicitar una cita</p>
-      <h2 class="mt-3 max-w-2xl text-3xl sm:text-4xl">Tres pasos, sin crear una cuenta</h2>
+      <div data-reveal>
+        <p class="eyebrow">Solicitar una cita</p>
+        <h2 class="mt-3 max-w-2xl text-3xl sm:text-4xl">Tres pasos, sin crear una cuenta</h2>
+      </div>
       <ol class="mt-10 grid gap-5 md:grid-cols-3">
         {
           steps.map((s, i) => (
-            <li class="card p-6">
+            <li data-reveal style={`--d: ${i * 90}ms`} class="card card-lift relative overflow-hidden p-6"><span aria-hidden="true" class="pointer-events-none absolute right-5 top-3 font-display text-7xl leading-none text-teal-100">{i + 1}</span>
               <div class="flex items-center gap-3">
                 <span class="flex h-11 w-11 items-center justify-center rounded-full bg-teal-100 text-teal-800">
                   <s.icon aria-hidden="true" size={22} />
                 </span>
-                <span class="font-display text-lg text-teal-700" aria-hidden="true">
-                  0{i + 1}
-                </span>
+                
               </div>
               <h3 class="mt-4 text-xl">{s.title}</h3>
               <p class="mt-2 text-ink-soft">{s.text}</p>
@@ -99,61 +100,66 @@ const steps = [
           ))
         }
       </ol>
-      <div class="mt-8">
-        <a href={`${base}/cita`} class="btn btn-primary">Comenzar solicitud</a>
+      <div class="mt-8" data-reveal>
+        <a href={`${base}/cita`} class="btn btn-primary">Comenzar solicitud <ArrowRight aria-hidden="true" size={18} class="nudge" /></a>
       </div>
     </div>
   </section>
 
   <!-- ESPECIALIDADES -->
-  <section id="especialidades" class="scroll-mt-24 bg-teal-50 py-16 md:py-24">
+  <section id="especialidades" class="scroll-mt-24 bg-teal-50 py-14 md:py-20">
     <div class="container-page">
-      <p class="eyebrow">Especialidades y servicios</p>
-      <h2 class="mt-3 max-w-2xl text-3xl sm:text-4xl">Cuidado integral, desde el control hasta el tratamiento</h2>
-      <p class="mt-4 max-w-2xl text-ink-soft">
-        Esta información es orientativa y no reemplaza una evaluación médica individual. Para saber qué servicio
-        necesitas, consulta con el consultorio.
-      </p>
+      <div data-reveal>
+        <p class="eyebrow">Especialidades y servicios</p>
+        <h2 class="mt-3 max-w-2xl text-3xl sm:text-4xl">Cuidado integral, desde el control hasta el tratamiento</h2>
+        <p class="mt-4 max-w-2xl text-ink-soft">
+          Esta información es orientativa y no reemplaza una evaluación médica individual. Para saber qué servicio
+          necesitas, consulta con el consultorio.
+        </p>
+      </div>
 
-      <div class="mt-10">
+      <div class="mt-10" data-reveal>
         <ServiceGroups />
       </div>
       <div class="mt-8">
         <a href={`${base}/servicios`} class="inline-flex items-center gap-2 font-semibold text-teal-700 underline underline-offset-4">
-          Ver todos los servicios <ArrowRight aria-hidden="true" size={18} />
+          Ver todos los servicios <ArrowRight aria-hidden="true" size={18} class="nudge" />
         </a>
       </div>
     </div>
   </section>
 
   <!-- EL DOCTOR -->
-  <section id="doctor" class="scroll-mt-24 py-16 md:py-24">
-    <div class="container-page grid gap-10 md:grid-cols-[0.8fr_1.2fr] md:items-start">
-      <div>
-        <p class="eyebrow">El doctor</p>
-        <h2 class="mt-3 text-3xl sm:text-4xl">Rolando Vargas Calvetty</h2>
-        <p class="mt-3 font-display text-xl text-teal-700">Ginecólogo Oncólogo · Mastólogo</p>
-      </div>
-      <div class="max-w-2xl">
-        <p class="text-lg text-ink-soft">
-          El Dr. Vargas atiende en su consultorio de Cochabamba, en el Edificio V&amp;V NUR, junto al Parque Fidel Anze.
-        </p>
-        <a href={`${base}/doctor`} class="mt-4 inline-flex items-center gap-2 font-semibold text-teal-700 underline underline-offset-4">
-          Conocer al doctor <ArrowRight aria-hidden="true" size={18} />
-        </a>
+  <section id="doctor" class="scroll-mt-24 py-14 md:py-20">
+    <div class="container-page">
+      <div data-reveal class="card grid overflow-hidden md:grid-cols-[18rem_1fr]">
+        <div class="relative aspect-[4/3] md:aspect-auto">
+          <Image src={doctorPhoto} alt="Retrato del Dr. Rolando Vargas Calvetty" width={560} class="absolute inset-0 h-full w-full object-cover object-[50%_18%]" />
+        </div>
+        <div class="p-7 sm:p-10">
+          <p class="eyebrow">El doctor</p>
+          <h2 class="mt-3 text-3xl sm:text-4xl">Rolando Vargas Calvetty</h2>
+          <p class="mt-2 font-display text-xl text-teal-700">Ginecólogo Oncólogo · Mastólogo</p>
+          <p class="mt-5 max-w-xl text-lg text-ink-soft">
+            El Dr. Vargas atiende en su consultorio de Cochabamba, en el Edificio V&amp;V NUR, junto al Parque Fidel Anze.
+          </p>
+          <a href={`${base}/doctor`} class="btn btn-outline mt-6 !border-teal-700 !text-teal-800 hover:!bg-teal-50">
+            Conocer al doctor <ArrowRight aria-hidden="true" size={18} class="nudge" />
+          </a>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- PREGUNTAS -->
-  <section id="preguntas" class="scroll-mt-24 py-16 md:py-24">
-    <div class="container-page max-w-3xl">
+  <section id="preguntas" class="scroll-mt-24 border-y border-line bg-white py-14 md:py-20">
+    <div class="container-page max-w-3xl" data-reveal>
       <p class="eyebrow">Preguntas frecuentes</p>
       <h2 class="mt-3 text-3xl sm:text-4xl">Antes de pedir tu cita</h2>
       <div class="mt-8"><Faq items={FAQ_CITAS.slice(0, 4)} /></div>
       <div class="mt-6">
         <a href={`${base}/preguntas`} class="inline-flex items-center gap-2 font-semibold text-teal-700 underline underline-offset-4">
-          Ver todas las preguntas <ArrowRight aria-hidden="true" size={18} />
+          Ver todas las preguntas <ArrowRight aria-hidden="true" size={18} class="nudge" />
         </a>
       </div>
     </div>

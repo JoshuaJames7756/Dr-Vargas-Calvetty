@@ -1,3 +1,4 @@
+import PageHeader from "../components/PageHeader";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -60,10 +61,7 @@ export default function Availability() {
   return (
     <div className="space-y-12">
       <section aria-labelledby="av-w">
-        <h1 id="av-w" className="text-3xl sm:text-4xl">Disponibilidad</h1>
-        <p className="mt-2 max-w-2xl text-ink-soft">
-          Los horarios que definas aquí son los únicos que verán las pacientes. Un día sin horarios es un día sin atención. Horario de Cochabamba.
-        </p>
+        <PageHeader id="av-w" title="Disponibilidad" description="Los horarios que definas aquí son los únicos que verán las pacientes. Un día sin horarios es un día sin atención. Horario de Cochabamba." />
         {readOnly && me.data && <p className="mt-3 rounded-lg bg-amber-100 px-3 py-2 text-amber-800">Solo el doctor puede modificar la disponibilidad.</p>}
 
         <div className="mt-6 space-y-4">

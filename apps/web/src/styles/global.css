@@ -95,6 +95,17 @@
     text-transform: uppercase;
     color: var(--color-teal-700);
   }
+  .eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 1.75rem;
+    height: 2px;
+    margin-right: 0.7rem;
+    vertical-align: middle;
+    border-radius: 2px;
+    background: currentColor;
+    opacity: 0.55;
+  }
   .btn {
     display: inline-flex;
     align-items: center;
@@ -138,6 +149,13 @@
   .btn-whatsapp:hover {
     background: #17613c;
   }
+  .card-lift {
+    transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.25s;
+  }
+  .card-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 2px 4px rgb(10 63 66 / 0.06), 0 18px 34px -16px rgb(10 63 66 / 0.3);
+  }
   .card {
     background: #fff;
     border: 1px solid var(--color-line);
@@ -168,5 +186,45 @@
     overflow: hidden;
     clip: rect(0 0 0 0);
     white-space: nowrap;
+  }
+}
+
+/* Movimiento: entradas suaves al hacer scroll y al cargar. Solo si la persona no pidio reducir el movimiento. */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.65s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms), transform 0.65s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms);
+  }
+  .js [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+  }
+  .rise {
+    animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: var(--d, 0ms);
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .btn .nudge {
+    transition: transform 0.2s;
+  }
+  .btn:hover .nudge,
+  a:hover > .nudge {
+    transform: translateX(3px);
+  }
+}
+@media print {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

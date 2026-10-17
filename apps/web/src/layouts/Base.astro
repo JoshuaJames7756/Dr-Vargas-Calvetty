@@ -12,9 +12,11 @@ interface Props {
   /** Ruta canonica relativa, por ejemplo "/cita". */
   path?: string;
   noindex?: boolean;
+  /** La pagina ya incluye la seccion de contacto: el pie no la repite. */
+  contactInPage?: boolean;
 }
 
-const { title, description, path = "/", noindex: noindexProp = false } = Astro.props;
+const { title, description, path = "/", noindex: noindexProp = false, contactInPage = false } = Astro.props;
 // Mientras se muestre contenido de ejemplo, buscadores fuera.
 const noindex = noindexProp || SHOW_PENDING;
 const canonical = new URL(path, Astro.site).toString();
@@ -59,6 +61,9 @@ const jsonLd = {
     <meta property="og:image" content={new URL("/icon-512.png", Astro.site).toString()} />
     <meta name="twitter:card" content="summary" />
 
+    <script is:inline>
+      document.documentElement.classList.add("js");
+    </script>
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </head>
   <body class="min-h-dvh">
@@ -72,7 +77,25 @@ const jsonLd = {
     <main id="contenido">
       <slot />
     </main>
-    <Footer />
+    <Footer contactInPage={contactInPage} />
     <WhatsAppFab />
+    <script is:inline>
+      (function () {
+        var els = document.querySelectorAll("[data-reveal]");
+        if (!("IntersectionObserver" in window)) {
+          els.forEach(function (e) { e.classList.add("is-in"); });
+          return;
+        }
+        var io = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (en) {
+              if (en.isIntersecting) { en.target.classList.add("is-in"); io.unobserve(en.target); }
+            });
+          },
+          { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
+        );
+        els.forEach(function (e) { io.observe(e); });
+      })();
+    </script>
   </body>
 </html>
