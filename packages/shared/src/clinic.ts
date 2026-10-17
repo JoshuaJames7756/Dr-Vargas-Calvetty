@@ -31,6 +31,8 @@ export const CLINIC = {
   social: {
     facebook: "https://www.facebook.com/ginecologocochabamba/" as string | null,
   },
+  /** Agencia que desarrollo el sitio (credito del pie de pagina). */
+  developer: { name: "Xion Technology", url: "https://xiontech-seven.vercel.app/" },
 } as const;
 
 /** Enlace wa.me con mensaje prellenado. Abrirlo NO equivale a haber enviado el mensaje. */

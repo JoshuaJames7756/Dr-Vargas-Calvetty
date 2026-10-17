@@ -4,6 +4,7 @@ import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import WhatsAppFab from "../components/WhatsAppFab.astro";
 import { CLINIC } from "@dr-vargas/shared";
+import { SHOW_PENDING } from "../lib/pending";
 
 interface Props {
   title: string;
@@ -13,7 +14,9 @@ interface Props {
   noindex?: boolean;
 }
 
-const { title, description, path = "/", noindex = false } = Astro.props;
+const { title, description, path = "/", noindex: noindexProp = false } = Astro.props;
+// Mientras se muestre contenido de ejemplo, buscadores fuera.
+const noindex = noindexProp || SHOW_PENDING;
 const canonical = new URL(path, Astro.site).toString();
 const fullTitle = title.includes("Vargas") ? title : `${title} | Dr. Rolando Vargas Calvetty`;
 

@@ -47,7 +47,12 @@ const year = new Date().getFullYear();
   <div class="border-t border-teal-800">
     <div class="container-page flex flex-col gap-2 py-5 text-sm text-teal-200 sm:flex-row sm:items-center sm:justify-between">
       <p>© {year} {CLINIC.doctorName}. Todos los derechos reservados.</p>
-      <p>Sitio desarrollado por Xion Technology</p>
+      <p>
+        Sitio desarrollado por
+        <a class="underline underline-offset-4 hover:text-white" href={CLINIC.developer.url} target="_blank" rel="noopener noreferrer">
+          {CLINIC.developer.name}<span class="sr-only"> (se abre en una pestaña nueva)</span>
+        </a>
+      </p>
     </div>
     <p class="container-page pb-6 text-xs text-teal-300">
       La información de este sitio es educativa y no reemplaza una evaluación médica individual.
