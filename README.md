@@ -41,16 +41,6 @@ Pantallas: Hoy, Solicitudes, Agenda y Disponibilidad. Las acciones salen de las 
 - Las notas clínicas son solo del doctor (la asistente recibe 403 en el servidor). Cada lectura se registra en la auditoría sin copiar el contenido. Son de solo inserción: una corrección crea una nota nueva y conserva la anterior.
 - Migración: archivo `sql/003_pacientes_y_notas.sql`, para pegar en el SQL Editor de Neon (ver `sql/LEEME.md`). Pruebas con Postgres real: `TEST_DATABASE_URL=... pnpm --filter @dr-vargas/api test` contra una base de pruebas vacía con las migraciones aplicadas, nunca la de producción.
 
-## Documentos de pacientes
-
-Estudios y recetas (PDF, JPG, PNG o WEBP) se guardan dentro de Neon, sin servicios extra ni tarjeta. Solo el doctor los sube, los ve y los elimina; la asistente no tiene acceso.
-
-- Máximo 2 MB por archivo y 100 por paciente. Las fotos se reducen solas en el navegador. El servidor valida el tipo real por su contenido, no por la extensión.
-- Eliminar solo oculta el documento: la copia se conserva y la acción queda en el registro de auditoría, igual que subir y abrir.
-- Tope de seguridad de 350 MB en total (Neon Free ofrece 0,5 GB compartidos con el resto de datos). Al llegar, el servidor rechaza nuevas subidas con un aviso claro y no pierde nada.
-- Si el volumen crece, la ruta de salida es Cloudflare R2 (contratado por el cliente) manteniendo en Neon solo los metadatos.
-- Base de datos: `sql/005_documentos.sql`.
-
 ## Sitio público de demostración
 
 - Páginas: inicio, `/servicios`, `/doctor`, `/preguntas`, `/contacto`, `/cita`, `/privacidad`.
@@ -138,5 +128,9 @@ Un solo Worker sirve el sitio en `/`, el panel en `/panel/` y la API en `/api/*`
 4. Runtime, Variables and Secrets (el deploy no las borra): secretos `DATABASE_URL`, `CLERK_SECRET_KEY`, `CLERK_PUBLISHABLE_KEY`, `TURNSTILE_SECRET_KEY`, y `ALLOWED_ORIGIN` con la URL exacta del Worker (https://..., sin barra final).
 5. En Clerk, agrega esa URL a los dominios permitidos si lo pide.
 6. Migraciones y alta de personal: `docs/verificar-base.sql` y `docs/autorizar-staff.sql` en el SQL Editor de Neon.
-
+   git add .
+   git commit -m "Turnstile real"
+   git push
 Las migraciones no se ejecutan en el despliegue ni en cada solicitud: se aplican a mano con `pnpm db:migrate`.
+
+Turnstile con claves reales activado.
