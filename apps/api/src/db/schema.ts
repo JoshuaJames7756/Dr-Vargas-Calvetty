@@ -4,6 +4,7 @@ import {
   bigserial,
   boolean,
   check,
+  customType,
   date,
   index,
   integer,
@@ -215,3 +216,49 @@ export const patientNotes = pgTable(
     index("patient_notes_patient_idx").on(t.patientId, t.createdAt),
   ],
 );
+
+const bytea = customType<{ data: Uint8Array; driverData: Uint8Array }>({
+  dataType() {
+    return "bytea";
+  },
+});
+
+/**
+ * Documentos de pacientes (estudios, recetas). Solo el doctor los ve. Los metadatos van aqui y el contenido en
+ * patient_document_files, para que listar documentos nunca lea los archivos.
+ * No se borran: "eliminar" los oculta (deleted_at). Un trigger impide borrar filas o cambiar el contenido (migracion 0004).
+ */
+export const patientDocuments = pgTable(
+  "patient_documents",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    patientId: uuid("patient_id")
+      .notNull()
+      .references(() => patients.id, { onDelete: "restrict" }),
+    uploadedByStaffId: uuid("uploaded_by_staff_id")
+      .notNull()
+      .references(() => staffUsers.id, { onDelete: "restrict" }),
+    title: text("title").notNull(),
+    fileName: text("file_name").notNull(),
+    mimeType: text("mime_type").notNull(),
+    sizeBytes: integer("size_bytes").notNull(),
+    sha256: text("sha256").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    deletedByStaffId: uuid("deleted_by_staff_id").references(() => staffUsers.id, { onDelete: "restrict" }),
+  },
+  (t) => [
+    check("patient_documents_title_length", sql`char_length(${t.title}) between 1 and 120`),
+    check("patient_documents_size", sql`${t.sizeBytes} between 1 and 2097152`),
+    check("patient_documents_mime", sql`${t.mimeType} in ('application/pdf','image/jpeg','image/png','image/webp')`),
+    check("patient_documents_deleted_pair", sql`(${t.deletedAt} is null) = (${t.deletedByStaffId} is null)`),
+    index("patient_documents_patient_idx").on(t.patientId, t.createdAt),
+  ],
+);
+
+export const patientDocumentFiles = pgTable("patient_document_files", {
+  documentId: uuid("document_id")
+    .primaryKey()
+    .references(() => patientDocuments.id, { onDelete: "restrict" }),
+  content: bytea("content").notNull(),
+});

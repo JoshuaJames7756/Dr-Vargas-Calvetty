@@ -38,6 +38,14 @@ describe("seguridad de la API", () => {
     expect((await call(path)).status).toBe(401);
   });
 
+  it("los documentos de pacientes exigen sesion: listar, subir, descargar y eliminar (401)", async () => {
+    const id = "00000000-0000-4000-8000-000000000000";
+    expect((await call(`/api/patients/${id}/documents`)).status).toBe(401);
+    expect((await call(`/api/patients/${id}/documents`, { method: "POST", body: new FormData() })).status).toBe(401);
+    expect((await call(`/api/documents/${id}/file`)).status).toBe(401);
+    expect((await call(`/api/documents/${id}`, { method: "DELETE" })).status).toBe(401);
+  });
+
   it("el vinculo cita-paciente exige sesion (401)", async () => {
     const res = await call("/api/appointments/00000000-0000-4000-8000-000000000000/patient", { method: "POST", body: "{}", headers: { "Content-Type": "application/json" } });
     expect(res.status).toBe(401);

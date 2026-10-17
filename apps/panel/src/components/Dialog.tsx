@@ -5,10 +5,12 @@ interface Props {
   title: string;
   onClose: () => void;
   children: ReactNode;
+  /** Para vistas previas de documentos. */
+  wide?: boolean;
 }
 
 /** Dialogo modal nativo (<dialog>): foco atrapado, Escape cierra y es accesible para lectores de pantalla. */
-export default function Dialog({ open, title, onClose, children }: Props) {
+export default function Dialog({ open, title, onClose, children, wide = false }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -26,7 +28,7 @@ export default function Dialog({ open, title, onClose, children }: Props) {
       onClick={(e) => {
         if (e.target === ref.current) onClose();
       }}
-      className="m-auto w-[min(92vw,30rem)] rounded-2xl border border-line bg-white p-0 shadow-[0_20px_60px_-20px_rgb(0_0_0/0.5)] backdrop:bg-teal-950/50"
+      className={`m-auto ${wide ? "w-[min(94vw,52rem)]" : "w-[min(92vw,30rem)]"} rounded-2xl border border-line bg-white p-0 shadow-[0_20px_60px_-20px_rgb(0_0_0/0.5)] backdrop:bg-teal-950/50`}
     >
       {open && (
         <div className="p-6">

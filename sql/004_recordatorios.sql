@@ -1,4 +1,4 @@
--- 004: recordatorios por WhatsApp (columna reminder_sent_at en appointments). ESTA ES LA NUEVA: ejecutala una sola vez en el SQL Editor de Neon.
+-- 004: recordatorios por WhatsApp (columna reminder_sent_at en appointments). Ya aplicada.
 -- Corre dentro de una transaccion: o se aplica completa o no se aplica nada.
 BEGIN;
 

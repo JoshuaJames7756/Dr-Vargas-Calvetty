@@ -75,6 +75,15 @@ export interface ExceptionDto {
   note: string | null;
 }
 
+export interface DocumentDto {
+  id: string;
+  title: string;
+  fileName: string;
+  mimeType: string;
+  sizeBytes: number;
+  createdAt: string;
+}
+
 export interface SlotDto {
   startMinute: number;
   label: string;
@@ -84,14 +93,20 @@ export interface SlotDto {
 export function useApi() {
   const { getToken } = useAuth();
 
-  const request = useCallback(
-    async <T,>(path: string, init?: RequestInit): Promise<T> => {
+  /** Llamada autenticada. Convierte cualquier fallo en un ApiError con mensaje comprensible. */
+  const send = useCallback(
+    async (path: string, init?: RequestInit): Promise<Response> => {
       const token = await getToken();
       let res: Response;
       try {
         res = await fetch(`${API_BASE}${path}`, {
           ...init,
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token ?? ""}`, ...(init?.headers ?? {}) },
+          // Con FormData el navegador pone su propio Content-Type (con el boundary): no se fuerza JSON.
+          headers: {
+            ...(init?.body instanceof FormData ? {} : { "Content-Type": "application/json" }),
+            Authorization: `Bearer ${token ?? ""}`,
+            ...(init?.headers ?? {}),
+          },
         });
       } catch {
         throw new ApiError(0, "NETWORK", "Sin conexión con el servidor. Revisa tu internet e inténtalo de nuevo.");
@@ -108,10 +123,12 @@ export function useApi() {
         }
         throw new ApiError(res.status, code, message);
       }
-      return (await res.json()) as T;
+      return res;
     },
     [getToken],
   );
+
+  const request = useCallback(async <T,>(path: string, init?: RequestInit): Promise<T> => (await send(path, init)).json() as Promise<T>, [send]);
 
   return {
     me: () => request<{ id: string; displayName: string; role: "doctor" | "assistant" }>("/api/me"),
@@ -149,6 +166,16 @@ export function useApi() {
     listNotes: (patientId: string) => request<{ notes: NoteDto[] }>(`/api/patients/${patientId}/notes`).then((r) => r.notes),
     addNote: (patientId: string, body: string, amendsId?: string) =>
       request<{ note: { id: string } }>(`/api/patients/${patientId}/notes`, { method: "POST", body: JSON.stringify({ body, amendsId }) }),
+    listDocuments: (patientId: string) => request<{ documents: DocumentDto[] }>(`/api/patients/${patientId}/documents`).then((r) => r.documents),
+    uploadDocument: (patientId: string, title: string, file: File) => {
+      const form = new FormData();
+      form.set("title", title);
+      form.set("file", file);
+      return request<{ document: { id: string } }>(`/api/patients/${patientId}/documents`, { method: "POST", body: form });
+    },
+    /** Descarga el archivo como blob (con la sesion). El servidor deja constancia de quien lo abrio. */
+    downloadDocument: async (id: string): Promise<Blob> => (await send(`/api/documents/${id}/file`)).blob(),
+    deleteDocument: (id: string) => request<{ ok: true }>(`/api/documents/${id}`, { method: "DELETE" }),
     deleteException: (date: string) => request<{ ok: true }>(`/api/availability/exceptions/${date}`, { method: "DELETE" }),
   };
 }

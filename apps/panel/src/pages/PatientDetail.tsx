@@ -5,6 +5,7 @@ import { Link, useParams } from "react-router";
 import { toast } from "sonner";
 import { CLINIC, patientWhatsappLink } from "@dr-vargas/shared";
 import Dialog from "../components/Dialog";
+import PatientDocuments from "../components/PatientDocuments";
 import PatientForm from "../components/PatientForm";
 import { ErrorState, Loading } from "../components/States";
 import StatusBadge from "../components/StatusBadge";
@@ -114,9 +115,12 @@ export default function PatientDetail() {
       </section>
 
       {me.data?.role === "doctor" ? (
-        <Notes patientId={id} />
+        <>
+          <Notes patientId={id} />
+          <PatientDocuments patientId={id} />
+        </>
       ) : (
-        me.data && <p className="rounded-lg bg-teal-50 p-3 text-ink-soft">Las notas clínicas solo las ve el doctor.</p>
+        me.data && <p className="rounded-lg bg-teal-50 p-3 text-ink-soft">Las notas clínicas y los documentos solo los ve el doctor.</p>
       )}
 
       <Dialog open={editing} title="Editar datos" onClose={() => setEditing(false)}>

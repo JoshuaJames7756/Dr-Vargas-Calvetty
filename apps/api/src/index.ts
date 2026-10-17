@@ -7,6 +7,7 @@ import { AppError } from "./lib/errors";
 import { requireStaff } from "./middleware/auth";
 import { appointmentRoutes } from "./routes/appointments";
 import { availabilityRoutes } from "./routes/availability";
+import { documentRoutes, patientDocumentRoutes } from "./routes/documents";
 import { patientRoutes } from "./routes/patients";
 import { publicRoutes } from "./routes/public";
 
@@ -52,6 +53,10 @@ app.route("/api/appointments", appointmentRoutes);
 app.use("/api/patients/*", requireStaff);
 app.use("/api/patients", requireStaff);
 app.route("/api/patients", patientRoutes);
+app.route("/api/patients", patientDocumentRoutes);
+
+app.use("/api/documents/*", requireStaff);
+app.route("/api/documents", documentRoutes);
 
 app.use("/api/availability/*", requireStaff);
 app.use("/api/availability", requireStaff);

@@ -14,6 +14,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Db } from "./db/client";
 import * as schema from "./db/schema";
 import { AppError } from "./lib/errors";
+import { deleteDocument, listDocuments, readDocument, uploadDocument } from "./modules/documents/service";
 import { changeAppointmentStatus, setReminderSent } from "./modules/appointments/service";
 import { addNote, linkAppointmentToPatient, listNotes, searchPatients } from "./modules/patients/service";
 
@@ -140,5 +141,79 @@ describe.skipIf(!url)("integracion con PostgreSQL real", () => {
     expect(off?.reminderSentAt).toBeNull();
 
     expect(await code(setReminderSent(db, "00000000-0000-4000-8000-000000000000", true, staffId))).toBe("NOT_FOUND");
+  });
+
+  describe("documentos de pacientes", () => {
+    const pdf = (extra = "") => new TextEncoder().encode(`%PDF-1.4\n${extra}\n%%EOF`);
+    let patientId = "";
+    const doc = (title: string, bytes: Uint8Array, fileName = "estudio.pdf") => uploadDocument(db, patientId, { title, fileName, bytes }, staffId);
+
+    beforeAll(async () => {
+      const [p] = await db.insert(schema.patients).values({ fullName: `Paciente Docs ${run}`, phone: `7099${run}` }).returning({ id: schema.patients.id });
+      patientId = p!.id;
+    });
+
+    it("sube, lista sin leer el contenido y descarga exactamente los mismos bytes", async () => {
+      const bytes = pdf("contenido-1");
+      const created = await doc("Ecografia", bytes);
+      const list = await listDocuments(db, patientId);
+      expect(list.map((d) => d.id)).toContain(created.id);
+      expect(list[0]).not.toHaveProperty("content");
+      const file = await readDocument(db, created.id, staffId);
+      expect(file.mimeType).toBe("application/pdf");
+      expect(Array.from(file.content)).toEqual(Array.from(bytes));
+    });
+
+    it("rechaza lo que no es PDF o imagen aunque se llame .pdf, los archivos vacios y los muy grandes", async () => {
+      expect(await code(doc("Falso", new TextEncoder().encode("MZ programa"), "falso.pdf"))).toBe("UNSUPPORTED_TYPE");
+      expect(await code(doc("Vacio", new Uint8Array(0)))).toBe("EMPTY_FILE");
+      const big = new Uint8Array(2 * 1024 * 1024 + 1);
+      big.set(pdf());
+      expect(await code(doc("Grande", big))).toBe("FILE_TOO_LARGE");
+    });
+
+    it("no permite el mismo archivo dos veces en el mismo paciente", async () => {
+      const bytes = pdf("duplicado");
+      await doc("Original", bytes);
+      expect(await code(doc("Copia", bytes))).toBe("DUPLICATE_DOCUMENT");
+    });
+
+    it("eliminar oculta el documento, no se puede descargar y no se elimina dos veces", async () => {
+      const created = await doc("Receta", pdf("para-eliminar"));
+      await deleteDocument(db, created.id, staffId);
+      expect((await listDocuments(db, patientId)).map((d) => d.id)).not.toContain(created.id);
+      expect(await code(readDocument(db, created.id, staffId))).toBe("NOT_FOUND");
+      expect(await code(deleteDocument(db, created.id, staffId))).toBe("NOT_FOUND");
+    });
+
+    it("la base impide borrar documentos, cambiar su contenido o deshacer la eliminacion", async () => {
+      const created = await doc("Protegido", pdf("protegido"));
+      const attempt = async (q: string) => {
+        try {
+          await pool.query(q, [created.id]);
+          return null;
+        } catch (e) {
+          return (e as Error).message;
+        }
+      };
+      expect(await attempt("delete from patient_documents where id = $1")).toMatch(/no permite borrar/);
+      expect(await attempt("update patient_documents set title = 'otro' where id = $1")).toMatch(/solo permite registrar/);
+      expect(await attempt("update patient_document_files set content = 'x'::bytea where document_id = $1")).toBeTruthy();
+      expect(await attempt("delete from patient_document_files where document_id = $1")).toBeTruthy();
+      await deleteDocument(db, created.id, staffId);
+      expect(await attempt("update patient_documents set deleted_at = null, deleted_by_staff_id = null where id = $1")).toMatch(/ya fue eliminado/);
+    });
+
+    it("la auditoria registra subir, descargar y eliminar SIN titulo ni nombre de archivo", async () => {
+      const created = await doc("Titulo-clinico-secreto", pdf("auditoria"), "nombre-secreto.pdf");
+      await readDocument(db, created.id, staffId);
+      await deleteDocument(db, created.id, staffId);
+      const rows = await db.select().from(schema.auditLog).where(eq(schema.auditLog.entityId, patientId));
+      const mine = rows.filter((r) => (r.metadata as { documentId?: string } | null)?.documentId === created.id);
+      expect(mine.map((r) => r.action).sort()).toEqual(["patient.document.deleted", "patient.document.downloaded", "patient.document.uploaded"]);
+      const dump = JSON.stringify(mine);
+      expect(dump).not.toContain("Titulo-clinico-secreto");
+      expect(dump).not.toContain("nombre-secreto");
+    });
   });
 });
