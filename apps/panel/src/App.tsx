@@ -1,7 +1,7 @@
 import { SignIn, SignedIn, SignedOut, useClerk } from "@clerk/clerk-react";
 import { Route, Routes } from "react-router";
 import Shell from "./components/Shell";
-import { ErrorState, Loading } from "./components/States";
+import { ErrorState, Splash } from "./components/States";
 import { ApiError } from "./lib/api";
 import { useMe } from "./lib/useMe";
 import Agenda from "./pages/Agenda";
@@ -17,7 +17,7 @@ function Authorized() {
   const me = useMe();
   const { signOut } = useClerk();
 
-  if (me.isLoading) return <Loading label="Verificando tu acceso…" />;
+  if (me.isLoading) return <Splash />;
 
   // Autenticada en Clerk, pero sin fila activa en staff_users: sin acceso.
   if (me.error instanceof ApiError && me.error.status === 403) {
