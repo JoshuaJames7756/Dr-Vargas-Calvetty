@@ -34,3 +34,16 @@ export const WEEKDAYS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "
 export const WEEKDAY_ORDER = [1, 2, 3, 4, 5, 6, 0] as const;
 
 export const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+/** Meses como "YYYY-MM" (hora de Cochabamba). */
+export const monthOf = (date: string) => date.slice(0, 7);
+export const addMonths = (ym: string, n: number) => {
+  const [y, m] = ym.split("-").map(Number) as [number, number];
+  return new Date(Date.UTC(y, m - 1 + n, 1)).toISOString().slice(0, 7);
+};
+/** Rango UTC [inicio, fin) del mes local. */
+export const monthRangeUtc = (ym: string) => ({
+  from: new Date(`${ym}-01T04:00:00.000Z`).toISOString(),
+  to: new Date(`${addMonths(ym, 1)}-01T04:00:00.000Z`).toISOString(),
+});
+export const fmtMonth = (ym: string) => new Intl.DateTimeFormat("es-BO", { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${ym}-15T12:00:00Z`));

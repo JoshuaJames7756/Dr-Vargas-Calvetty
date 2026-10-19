@@ -4,7 +4,7 @@ import { z } from "zod";
 import { APPOINTMENT_STATUSES, changeStatusSchema, linkPatientSchema } from "@dr-vargas/shared";
 import type { AppEnv } from "../env";
 import { linkAppointmentToPatient } from "../modules/patients/service";
-import { changeAppointmentStatus, listAppointments, rescheduleAppointment, setReminderSent } from "../modules/appointments/service";
+import { changeAppointmentStatus, getAppointmentStats, listAppointments, rescheduleAppointment, setReminderSent } from "../modules/appointments/service";
 
 /** Rutas privadas: el middleware requireStaff se aplica al montar este router (ver index.ts). */
 export const appointmentRoutes = new Hono<AppEnv>();
@@ -25,6 +25,17 @@ appointmentRoutes.get("/", zValidator("query", listQuery), async (c) => {
     limit: q.limit,
   });
   return c.json({ appointments: rows });
+});
+
+const statsQuery = z.object({ from: z.string().datetime({ offset: true }), to: z.string().datetime({ offset: true }) });
+
+appointmentRoutes.get("/stats", zValidator("query", statsQuery), async (c) => {
+  const q = c.req.valid("query");
+  const from = new Date(q.from);
+  const to = new Date(q.to);
+  // Rango acotado (maximo 400 dias) para que una consulta no recorra toda la tabla.
+  if (!(to > from) || to.getTime() - from.getTime() > 400 * 86_400_000) return c.json({ error: { code: "BAD_RANGE", message: "Rango de fechas no valido" } }, 400);
+  return c.json({ stats: await getAppointmentStats(c.get("db"), from, to) });
 });
 
 appointmentRoutes.patch(

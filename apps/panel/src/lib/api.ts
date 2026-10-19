@@ -31,6 +31,14 @@ export interface AppointmentDto {
   createdAt: string;
 }
 
+export interface StatsDto {
+  /** Citas confirmadas, atendidas o con inasistencia. */
+  total: number;
+  byStatus: Partial<Record<AppointmentStatus, number>>;
+  byService: { name: string; count: number }[];
+  byDay: { date: string; count: number }[];
+}
+
 export interface PatientDto {
   id: string;
   fullName: string;
@@ -132,6 +140,8 @@ export function useApi() {
 
   return {
     me: () => request<{ id: string; displayName: string; role: "doctor" | "assistant" }>("/api/me"),
+    stats: (from: string, to: string) =>
+      request<{ stats: StatsDto }>(`/api/appointments/stats?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`).then((r) => r.stats),
     listAppointments: (params: { status?: AppointmentStatus; from?: string; to?: string; limit?: number }) => {
       const q = new URLSearchParams();
       if (params.status) q.set("status", params.status);

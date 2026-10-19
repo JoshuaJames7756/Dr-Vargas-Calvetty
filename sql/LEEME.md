@@ -16,6 +16,7 @@ Las dos primeras estan solo como referencia, por si un dia hay que crear una bas
 
 - `herramientas/verificar-base.sql`: comprueba las protecciones. Muestra un "error" con los resultados: es lo esperado y no guarda nada.
 - `herramientas/autorizar-staff.sql`: autoriza a una cuenta de Clerk para entrar al panel.
+- `herramientas/autorizar-asistente.sql`: autoriza una segunda cuenta como asistente para probar los permisos (pasos dentro del archivo).
 - `herramientas/limpiar-datos-de-prueba.sql`: borra las filas de prueba de la verificacion (leer las instrucciones dentro).
 
 ## Regla para el futuro

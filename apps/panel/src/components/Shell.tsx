@@ -1,7 +1,7 @@
 import { UserButton } from "@clerk/clerk-react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "motion/react";
-import { BellRing, CalendarDays, CalendarOff, CalendarPlus, Globe, Inbox, Sun, Users, type LucideIcon } from "lucide-react";
+import { BarChart3, BellRing, CalendarDays, CalendarOff, CalendarPlus, Globe, Inbox, Sun, Users, type LucideIcon } from "lucide-react";
 import { NavLink, Outlet, useLocation } from "react-router";
 import logo from "../assets/logo.png";
 import logoLight from "../assets/logo-light.png";
@@ -24,6 +24,7 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
       { to: "/solicitudes", label: "Solicitudes", icon: Inbox, badge: true },
       { to: "/agenda", label: "Agenda", icon: CalendarDays },
       { to: "/recordatorios", label: "Recordatorios", icon: BellRing },
+      { to: "/resumen", label: "Resumen", icon: BarChart3 },
     ],
   },
   { label: "Pacientes", items: [{ to: "/pacientes", label: "Pacientes", icon: Users }] },
@@ -50,7 +51,7 @@ export default function Shell() {
       end={n.end}
       className={({ isActive }) =>
         mobile
-          ? `relative flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-[0.7rem] font-semibold ${isActive ? "text-teal-800" : "text-ink-soft"}`
+          ? `relative flex min-h-14 min-w-[4.6rem] flex-1 flex-col items-center justify-center gap-0.5 text-[0.7rem] font-semibold ${isActive ? "text-teal-800" : "text-ink-soft"}`
           : `group relative flex min-h-11 items-center gap-3 rounded-xl px-4 font-semibold transition-colors ${isActive ? "bg-teal-700 text-white shadow-[0_8px_20px_-10px_rgb(0_0_0/0.6)]" : "text-teal-100 hover:bg-teal-800/80"}`
       }
     >
@@ -124,7 +125,7 @@ export default function Shell() {
           </motion.div>
         </main>
 
-        <nav aria-label="Principal" className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-cream md:hidden">
+        <nav aria-label="Principal" className="fixed inset-x-0 bottom-0 z-30 flex overflow-x-auto border-t border-line bg-cream md:hidden">
           {FLAT.map((n) => link(n, true))}
         </nav>
       </div>

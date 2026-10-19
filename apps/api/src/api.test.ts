@@ -27,6 +27,11 @@ describe("seguridad de la API", () => {
     expect(res.status).toBe(200);
   });
 
+  it("las estadisticas exigen sesion (401)", async () => {
+    const res = await call("/api/appointments/stats?from=2033-05-01T04:00:00Z&to=2033-06-01T04:00:00Z");
+    expect(res.status).toBe(401);
+  });
+
   it("las rutas privadas rechazan solicitudes sin token (401)", async () => {
     const res = await call("/api/appointments");
     expect(res.status).toBe(401);

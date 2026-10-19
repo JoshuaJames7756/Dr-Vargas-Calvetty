@@ -15,7 +15,7 @@ import type { Db } from "./db/client";
 import * as schema from "./db/schema";
 import { AppError } from "./lib/errors";
 import { deleteDocument, listDocuments, readDocument, uploadDocument } from "./modules/documents/service";
-import { changeAppointmentStatus, setReminderSent } from "./modules/appointments/service";
+import { changeAppointmentStatus, getAppointmentStats, setReminderSent } from "./modules/appointments/service";
 import { addNote, linkAppointmentToPatient, listNotes, searchPatients } from "./modules/patients/service";
 
 const url = process.env.TEST_DATABASE_URL;
@@ -141,6 +141,29 @@ describe.skipIf(!url)("integracion con PostgreSQL real", () => {
     expect(off?.reminderSentAt).toBeNull();
 
     expect(await code(setReminderSent(db, "00000000-0000-4000-8000-000000000000", true, staffId))).toBe("NOT_FOUND");
+  });
+
+  it("estadisticas: cuenta por estado, servicio y dia local, solo dentro del rango", async () => {
+    const mk = async (iso: string, status: "CONFIRMED" | "COMPLETED" | "NO_SHOW" | "CANCELLED" | "PENDING") => {
+      const start = new Date(iso);
+      await db.insert(schema.appointments).values({ serviceId, requesterName: "Stat IT", requesterPhone: "70055555", startsAt: start, endsAt: new Date(start.getTime() + 30 * 60_000), status });
+    };
+    // 2033-05: rango propio para no mezclarse con otras pruebas. 02:00Z del dia 11 es todavia el dia 10 en La Paz.
+    await mk("2033-05-10T14:00:00Z", "COMPLETED");
+    await mk("2033-05-10T15:00:00Z", "COMPLETED");
+    await mk("2033-05-11T02:00:00Z", "NO_SHOW");
+    await mk("2033-05-12T14:00:00Z", "CONFIRMED");
+    await mk("2033-05-12T15:00:00Z", "CANCELLED");
+    await mk("2033-05-13T15:00:00Z", "PENDING");
+    await mk("2033-06-01T15:00:00Z", "COMPLETED"); // fuera del rango
+    const s = await getAppointmentStats(db, new Date("2033-05-01T04:00:00Z"), new Date("2033-06-01T04:00:00Z"));
+    expect(s.total).toBe(4);
+    expect(s.byStatus).toMatchObject({ COMPLETED: 2, NO_SHOW: 1, CONFIRMED: 1, CANCELLED: 1, PENDING: 1 });
+    expect(s.byService).toEqual([{ name: "Servicio IT", count: 4 }]);
+    expect(s.byDay).toEqual([
+      { date: "2033-05-10", count: 3 },
+      { date: "2033-05-12", count: 1 },
+    ]);
   });
 
   describe("documentos de pacientes", () => {

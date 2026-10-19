@@ -1,4 +1,4 @@
-import { and, count, desc, eq, gte, lt, sql } from "drizzle-orm";
+import { and, count, desc, eq, gte, inArray, lt, sql } from "drizzle-orm";
 import {
   canTransition,
   type AppointmentRequestInput,
@@ -94,6 +94,41 @@ export async function listAppointments(db: Db, opts: { status?: AppointmentStatu
     .where(conditions.length ? and(...conditions) : undefined)
     .orderBy(opts.status === "PENDING" ? desc(appointments.createdAt) : appointments.startsAt)
     .limit(Math.min(opts.limit ?? 100, 200));
+}
+
+/** Citas "reales" para estadisticas: ya confirmadas, atendidas o con inasistencia. */
+const REAL_STATUSES: AppointmentStatus[] = ["CONFIRMED", "COMPLETED", "NO_SHOW"];
+
+/** Estadisticas de un rango [from, to). Todo se calcula en la base; no devuelve datos de pacientes. */
+export async function getAppointmentStats(db: Db, from: Date, to: Date) {
+  const inRange = and(gte(appointments.startsAt, from), lt(appointments.startsAt, to));
+  const n = sql<number>`count(*)::int`;
+
+  const statusRows = await db.select({ status: appointments.status, n }).from(appointments).where(inRange).groupBy(appointments.status);
+  const serviceRows = await db
+    .select({ name: services.name, n })
+    .from(appointments)
+    .innerJoin(services, eq(appointments.serviceId, services.id))
+    .where(and(inRange, inArray(appointments.status, REAL_STATUSES)))
+    .groupBy(services.name)
+    .orderBy(desc(n));
+  const day = sql<string>`to_char((${appointments.startsAt} at time zone 'America/La_Paz')::date, 'YYYY-MM-DD')`;
+  const dayRows = await db
+    .select({ day, n })
+    .from(appointments)
+    .where(and(inRange, inArray(appointments.status, REAL_STATUSES)))
+    .groupBy(day)
+    .orderBy(day);
+
+  const byStatus: Record<string, number> = {};
+  for (const r of statusRows) byStatus[r.status] = r.n;
+  const total = REAL_STATUSES.reduce((sum, s) => sum + (byStatus[s] ?? 0), 0);
+  return {
+    total,
+    byStatus,
+    byService: serviceRows.map((r) => ({ name: r.name, count: r.n })),
+    byDay: dayRows.map((r) => ({ date: r.day, count: r.n })),
+  };
 }
 
 interface ChangeStatusArgs {

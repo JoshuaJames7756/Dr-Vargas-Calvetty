@@ -10,6 +10,7 @@ import PatientDetail from "./pages/PatientDetail";
 import Patients from "./pages/Patients";
 import Reminders from "./pages/Reminders";
 import Requests from "./pages/Requests";
+import Stats from "./pages/Stats";
 import Today from "./pages/Today";
 
 function Authorized() {
@@ -44,6 +45,7 @@ function Authorized() {
         <Route index element={<Today />} />
         <Route path="solicitudes" element={<Requests />} />
         <Route path="agenda" element={<Agenda />} />
+        <Route path="resumen" element={<Stats />} />
         <Route path="recordatorios" element={<Reminders />} />
         <Route path="pacientes" element={<Patients />} />
         <Route path="pacientes/:id" element={<PatientDetail />} />
