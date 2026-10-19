@@ -157,3 +157,8 @@ Las migraciones no se ejecutan en el despliegue ni en cada solicitud: se aplican
 ## Resumen (estadísticas)
 
 Pantalla `/panel/resumen`: citas del mes, atendidas, inasistencias, porcentaje de asistencia, canceladas, y reparto por servicio y por día. Se calcula en el servidor con `GET /api/appointments/stats` (consultas agrupadas, sin datos de pacientes) y exige sesión del personal. No requiere migración SQL.
+
+## Protección contra abuso y política de contenido
+
+- Mensajes de contacto: máximo 3 por teléfono cada hora (`modules/contact/service.ts`), además de Turnstile. Solicitudes de cita: máximo 3 pendientes por teléfono.
+- Política de contenido (CSP) en modo **solo reporte** en el sitio (`scripts/assemble.mjs`) y en el panel (`apps/api/src/index.ts`). No bloquea nada: avisa en la consola del navegador. Ver `docs/lanzamiento.md` para decidir cuándo pasar a modo bloqueo.

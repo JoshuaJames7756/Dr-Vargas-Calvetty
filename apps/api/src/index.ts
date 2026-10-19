@@ -64,6 +64,14 @@ app.route("/api/availability", availabilityRoutes);
 
 // Panel (SPA de React). Los archivos con extension se sirven tal cual; cualquier otra ruta (por ejemplo /panel/agenda)
 // devuelve index.html para que React Router resuelva la pantalla. Los recursos /panel/assets/* no pasan por el Worker.
+// Politica de contenido del panel en modo SOLO REPORTE: no bloquea nada, solo avisa en la consola del navegador.
+const PANEL_CSP =
+  "default-src 'self'; script-src 'self' 'unsafe-inline' https://*.clerk.accounts.dev https://*.clerk.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://img.clerk.com https://*.clerk.com; font-src 'self' data:; connect-src 'self' https://*.clerk.accounts.dev https://*.clerk.com; frame-src https://*.clerk.accounts.dev https://challenges.cloudflare.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'";
+app.use("/panel/*", async (c, next) => {
+  await next();
+  c.res.headers.set("Content-Security-Policy-Report-Only", PANEL_CSP);
+});
+
 app.get("/panel/*", async (c) => {
   const assets = c.env.ASSETS;
   if (!assets) return c.json({ error: { code: "NOT_FOUND", message: "Ruta no encontrada" } }, 404);

@@ -16,6 +16,7 @@ import * as schema from "./db/schema";
 import { AppError } from "./lib/errors";
 import { deleteDocument, listDocuments, readDocument, uploadDocument } from "./modules/documents/service";
 import { changeAppointmentStatus, getAppointmentStats, setReminderSent } from "./modules/appointments/service";
+import { createContactMessage } from "./modules/contact/service";
 import { addNote, linkAppointmentToPatient, listNotes, searchPatients } from "./modules/patients/service";
 
 const url = process.env.TEST_DATABASE_URL;
@@ -238,5 +239,12 @@ describe.skipIf(!url)("integracion con PostgreSQL real", () => {
       expect(dump).not.toContain("Titulo-clinico-secreto");
       expect(dump).not.toContain("nombre-secreto");
     });
+  });
+  it("contacto: el cuarto mensaje del mismo telefono en una hora se rechaza, y otro telefono no se afecta", async () => {
+    const phone = `7${run}1`;
+    const send = (ph: string) => createContactMessage(db, { fullName: "Contacto IT", phone: ph, message: "Hola" });
+    for (let i = 0; i < 3; i++) expect(await code(send(phone))).toBeNull();
+    expect(await code(send(phone))).toBe("TOO_MANY_MESSAGES");
+    expect(await code(send(`7${run}2`))).toBeNull();
   });
 });

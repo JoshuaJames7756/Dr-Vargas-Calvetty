@@ -2,12 +2,12 @@ import { zValidator } from "@hono/zod-validator";
 import { asc, eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { appointmentRequestSchema, availabilityQuerySchema, contactMessageSchema } from "@dr-vargas/shared";
-import { contactMessages, services } from "../db/schema";
+import { services } from "../db/schema";
 import type { AppEnv } from "../env";
-import { audit } from "../lib/audit";
 import { AppError } from "../lib/errors";
 import { verifyTurnstile } from "../lib/turnstile";
 import { getAvailableSlots, utcToLocal } from "../modules/availability/service";
+import { createContactMessage } from "../modules/contact/service";
 import { createAppointmentRequest } from "../modules/appointments/service";
 import { minutesToHHMM } from "@dr-vargas/shared";
 
@@ -73,12 +73,7 @@ publicRoutes.post("/contact", zValidator("json", contactMessageSchema), async (c
   const human = await verifyTurnstile(c.env.TURNSTILE_SECRET_KEY, input.turnstileToken, ip);
   if (!human) throw new AppError(400, "TURNSTILE_FAILED", "No pudimos verificar que eres una persona. Inténtalo de nuevo.");
 
-  const db = c.get("db");
-  const [row] = await db
-    .insert(contactMessages)
-    .values({ fullName: input.fullName, phone: input.phone, message: input.message })
-    .returning({ id: contactMessages.id });
-  await audit(db, { actorType: "public", action: "contact.received", entityType: "contact_message", entityId: row?.id });
+  await createContactMessage(c.get("db"), input);
 
   return c.json({ message: "Recibimos tu mensaje. El consultorio te responderá lo antes posible." }, 201);
 });

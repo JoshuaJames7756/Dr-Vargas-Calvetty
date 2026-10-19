@@ -175,3 +175,13 @@ describe("panel (SPA)", () => {
     expect((await call("/panel/agenda")).status).toBe(404);
   });
 });
+
+describe("politica de contenido del panel", () => {
+  it("el panel envia CSP solo-reporte y no bloquea", async () => {
+    const assets = { fetch: async () => new Response("<html></html>", { headers: { "content-type": "text/html" } }) };
+    const res = await app.request("/panel/agenda", undefined, { ...env, ASSETS: assets }, ctx);
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-security-policy-report-only")).toContain("frame-ancestors 'none'");
+    expect(res.headers.get("content-security-policy")).toBeNull();
+  });
+});
