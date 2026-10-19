@@ -25,7 +25,7 @@ function Bars({ stats }: { stats: StatsDto }) {
     <div>
       <div className="flex h-40 items-end gap-1" aria-hidden>
         {stats.byDay.map((d) => (
-          <div key={d.date} className="flex h-full flex-1 flex-col justify-end" title={`${d.date}: ${d.count}`}>
+          <div key={d.date} className="flex h-full max-w-8 flex-1 flex-col justify-end" title={`${d.date}: ${d.count}`}>
             <div className="rounded-t bg-teal-600" style={{ height: `${(d.count / max) * 100}%`, minHeight: 4 }} />
           </div>
         ))}
@@ -80,10 +80,10 @@ export default function Stats() {
       {s && (s.total > 0 || closed > 0 || cancelled > 0) && (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Tile icon={<CalendarCheck size={18} />} label="Citas del mes" value={s.total} />
+            <Tile icon={<CalendarCheck size={18} />} label="Citas del mes" value={s.total} hint="Confirmadas y cerradas" />
             <Tile icon={<CalendarCheck size={18} />} label="Atendidas" value={done} hint={attendance === null ? "Aún sin citas cerradas" : `Asistencia ${attendance}%`} />
-            <Tile icon={<UserX size={18} />} label="No asistieron" value={noShow} />
-            <Tile icon={<XCircle size={18} />} label="Canceladas o rechazadas" value={cancelled} />
+            <Tile icon={<UserX size={18} />} label="No asistieron" value={noShow} hint="Inasistencias" />
+            <Tile icon={<XCircle size={18} />} label="Canceladas" value={cancelled} hint="Incluye rechazadas" />
           </div>
 
           <div className="grid gap-4 lg:grid-cols-2">
