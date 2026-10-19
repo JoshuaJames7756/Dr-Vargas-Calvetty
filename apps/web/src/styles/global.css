@@ -222,6 +222,32 @@
     transform: translateX(3px);
   }
 }
+/* Decoracion: puntos suaves y manchas de color difuminadas, para que los fondos no se vean como una pared lisa. */
+.bg-dots {
+  background-image: radial-gradient(rgb(11 124 128 / 0.14) 1.3px, transparent 1.3px);
+  background-size: 24px 24px;
+}
+.blob {
+  position: absolute;
+  z-index: -1;
+  border-radius: 9999px;
+  filter: blur(70px);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .float-slow {
+    animation: float-slow 11s ease-in-out infinite;
+  }
+  @keyframes float-slow {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(14px) rotate(2deg);
+    }
+  }
+}
 @media print {
   [data-reveal] {
     opacity: 1 !important;

@@ -28,6 +28,12 @@ export const CLINIC = {
   hours: {
     label: "Lunes a viernes, de 14:00 a 18:00",
   },
+  /** Ubicacion real (enlace de Google Maps del consultorio, "V&V NUR"). */
+  maps: {
+    lat: -17.3715105,
+    lng: -66.1511622,
+    url: "https://maps.app.goo.gl/jVbbk2aRgfpR5MJ66",
+  },
   social: {
     facebook: "https://www.facebook.com/ginecologocochabamba/" as string | null,
   },

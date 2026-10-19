@@ -95,7 +95,7 @@ export default function AppointmentCard({ appt, showDay = false }: { appt: Appoi
             ))}
         </div>
         {actions.length > 0 && (
-          <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:justify-end">
+          <div className="flex w-full flex-wrap gap-2 sm:ml-auto sm:w-auto sm:justify-end">
             {actions.map((a) => (
               <button key={a.key} type="button" className={`btn btn-sm btn-${a.tone} flex-1 sm:flex-none`} disabled={busy} onClick={() => run(a)}>
                 {busy && changeStatus.variables?.to === a.to ? <Loader2 aria-hidden size={15} className="animate-spin" /> : null}

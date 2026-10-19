@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Download, FileImage, FileText, Loader2, Trash2, Upload } from "lucide-react";
+import { Download, FileImage, FileText, Loader2, Trash2, Upload, UploadCloud, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import Dialog from "./Dialog";
@@ -21,6 +21,7 @@ export default function PatientDocuments({ patientId }: { patientId: string }) {
   const [preview, setPreview] = useState<{ doc: DocumentDto; url: string } | null>(null);
   const [opening, setOpening] = useState<string | null>(null);
   const [removing, setRemoving] = useState<DocumentDto | null>(null);
+  const [dragging, setDragging] = useState(false);
 
   const docs = useQuery({ queryKey: ["documents", patientId], queryFn: () => api.listDocuments(patientId), retry: 1 });
 
@@ -74,6 +75,7 @@ export default function PatientDocuments({ patientId }: { patientId: string }) {
   const onPick = (f: File | null) => {
     setFile(f);
     setFileError(f ? checkFile(f) : null);
+    if (!f && fileRef.current) fileRef.current.value = "";
     if (f && !title.trim()) setTitle(f.name.replace(/\.[^.]+$/, "").slice(0, 120));
   };
 
@@ -87,37 +89,57 @@ export default function PatientDocuments({ patientId }: { patientId: string }) {
       </p>
 
       <form
-        className="card mt-4 space-y-3 p-4"
+        className="card mt-4 space-y-4 p-4 sm:p-5"
         onSubmit={(e) => {
           e.preventDefault();
           if (file && title.trim() && !fileError) upload.mutate();
         }}
       >
-        <div>
-          <label htmlFor="doc-archivo" className="block font-semibold">
-            Archivo
+        {!file ? (
+          <label
+            htmlFor="doc-archivo"
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragging(true);
+            }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragging(false);
+              const f = e.dataTransfer.files?.[0];
+              if (f) onPick(f);
+            }}
+            className={`flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed px-6 py-9 text-center transition-colors focus-within:outline focus-within:outline-[3px] focus-within:outline-offset-2 focus-within:outline-teal-700 ${dragging ? "border-teal-600 bg-teal-100" : "border-teal-300 bg-teal-50 hover:bg-teal-100/70"}`}
+          >
+            <span className={`flex h-14 w-14 items-center justify-center rounded-full bg-white text-teal-700 shadow-sm ${dragging ? "scale-110" : ""} transition-transform`}>
+              <UploadCloud aria-hidden size={26} />
+            </span>
+            <span className="font-semibold text-teal-900">Arrastra un archivo aquí o elige uno</span>
+            <span className="text-sm text-ink-soft">PDF, JPG, PNG o WEBP · hasta 2 MB</span>
+            <input id="doc-archivo" ref={fileRef} type="file" accept={DOCUMENT_ACCEPT} className="sr-only" onChange={(e) => onPick(e.target.files?.[0] ?? null)} />
           </label>
-          <input
-            id="doc-archivo"
-            ref={fileRef}
-            type="file"
-            accept={DOCUMENT_ACCEPT}
-            className="field mt-1"
-            aria-describedby={fileError ? "doc-error" : undefined}
-            aria-invalid={!!fileError}
-            onChange={(e) => onPick(e.target.files?.[0] ?? null)}
-          />
-          {fileError && (
-            <p id="doc-error" role="alert" className="mt-1 text-sm text-danger">
-              {fileError}
-            </p>
-          )}
-        </div>
+        ) : (
+          <div className={`flex items-center gap-3 rounded-2xl border px-4 py-3 ${fileError ? "border-danger bg-red-50" : "border-teal-200 bg-teal-50"}`}>
+            {file.type === "application/pdf" ? <FileText aria-hidden size={24} className="shrink-0 text-teal-700" /> : <FileImage aria-hidden size={24} className="shrink-0 text-teal-700" />}
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-semibold">{file.name}</p>
+              <p className="text-sm text-ink-soft">{formatBytes(file.size)}</p>
+            </div>
+            <button type="button" className="btn btn-outline btn-sm" onClick={() => onPick(null)} aria-label={`Quitar ${file.name}`}>
+              <X aria-hidden size={15} /> Quitar
+            </button>
+          </div>
+        )}
+        {fileError && (
+          <p id="doc-error" role="alert" className="text-sm font-semibold text-danger">
+            {fileError}
+          </p>
+        )}
         <div>
           <label htmlFor="doc-titulo" className="block font-semibold">
-            Título
+            Título del documento
           </label>
-          <input id="doc-titulo" className="field mt-1" maxLength={120} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Por ejemplo: Ecografía mamaria" />
+          <input id="doc-titulo" className="field mt-1 w-full" maxLength={120} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Por ejemplo: Ecografía mamaria" />
         </div>
         <div className="flex justify-end">
           <button type="submit" className="btn btn-primary" disabled={upload.isPending || !file || !title.trim() || !!fileError}>

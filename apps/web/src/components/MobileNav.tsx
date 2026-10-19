@@ -5,6 +5,7 @@ import { useEffect, useId, useRef, useState } from "react";
 interface Link {
   href: string;
   label: string;
+  children?: { href: string; label: string }[];
 }
 
 /** Menu movil accesible: boton con aria-expanded, cierre con Escape y foco devuelto al boton. */
@@ -61,6 +62,17 @@ export default function MobileNav({ links, ctaHref }: { links: Link[]; ctaHref: 
                   >
                     {l.label}
                   </a>
+                  {l.children && (
+                    <ul className="mb-2 ml-4 border-l-2 border-teal-100 pl-4">
+                      {l.children.map((c) => (
+                        <li key={c.href}>
+                          <a href={c.href} onClick={() => setOpen(false)} className="flex min-h-11 items-center text-base text-ink-soft">
+                            {c.label}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </li>
               ))}
             </ul>

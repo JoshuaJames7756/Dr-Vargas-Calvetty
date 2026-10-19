@@ -13,8 +13,8 @@ export interface FaqItem {
 
 export const FAQ_CITAS: FaqItem[] = [
   {
-    q: "¿Necesito crear una cuenta para pedir una cita?",
-    a: "No. Solo necesitas tu nombre, tu número de celular o WhatsApp y, si quieres, un motivo breve. No pedimos diagnósticos ni datos médicos detallados.",
+    q: "¿Qué datos necesito para pedir una cita?",
+    a: "Solo necesitas tu nombre, tu número de celular o WhatsApp y, si quieres, un motivo breve. No pedimos diagnósticos ni datos médicos detallados.",
   },
   {
     q: "¿Mi solicitud ya es una cita confirmada?",

@@ -44,8 +44,9 @@ Pantallas: Hoy, Solicitudes, Agenda y Disponibilidad. Las acciones salen de las 
 ## Diseño y movimiento
 
 - Sitio: las secciones aparecen con una entrada suave al hacer scroll (`data-reveal`, script en `Base.astro`) y el hero al cargar (`.rise`). Todo se desactiva con «reducir movimiento» del sistema y sin JavaScript el contenido se ve completo.
-- Contacto con mapa (Google Maps incrustado, sin clave) solo en inicio y `/contacto`; las demás páginas usan `CtaBand` y el pie muestra la dirección solo donde no hay sección de contacto.
-- Panel: `PageHeader` unifica los encabezados; hay acceso «Ver sitio web» en el menú, y el sitio enlaza «Acceso del consultorio» en el pie.
+- Contacto: mapa de Google incrustado (coordenadas y enlace en `CLINIC.maps`, `packages/shared/src/clinic.ts`) solo en inicio y `/contacto`, sobre fondo claro para distinguirse del pie; las demás páginas usan `CtaBand` y el pie muestra la dirección solo donde no hay sección de contacto.
+- Menú «Servicios» del encabezado con ventana desplegable (`ServicesMenu.tsx`); `/servicios` tiene su propio encabezado y el inicio solo resume las tres áreas.
+- Panel: menú lateral fijo por categorías, bienvenida con resumen del día en «Hoy», subida de documentos con zona de arrastre. `PageHeader` unifica los encabezados; hay acceso «Ver sitio web» en el menú, y el sitio enlaza «Acceso del consultorio» en el pie.
 
 ## SEO y página 404
 

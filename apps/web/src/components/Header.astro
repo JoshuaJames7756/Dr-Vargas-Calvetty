@@ -2,10 +2,16 @@
 import { Image } from "astro:assets";
 import logo from "../assets/logo.png";
 import MobileNav from "./MobileNav.tsx";
+import ServicesMenu from "./ServicesMenu.tsx";
+import { SERVICE_GROUPS } from "../data/services";
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const links = [
-  { href: `${base}/servicios`, label: "Servicios" },
+  {
+    href: `${base}/servicios`,
+    label: "Servicios",
+    children: SERVICE_GROUPS.map((g) => ({ href: `${base}/servicios#${g.id}`, label: g.title })),
+  },
   { href: `${base}/doctor`, label: "El doctor" },
   { href: `${base}/preguntas`, label: "Preguntas" },
   { href: `${base}/contacto`, label: "Contacto" },
@@ -15,7 +21,7 @@ const cta = `${base}/cita`;
 ---
 
 <header class="sticky top-0 z-40 border-b border-line bg-cream/95 backdrop-blur supports-[backdrop-filter]:bg-cream/85">
-  <div class="container-page relative flex h-[4.5rem] items-center justify-between gap-4">
+  <div class="container-page flex h-[4.5rem] items-center justify-between gap-4">
     <a href={`${base}/`} class="flex items-center gap-3" aria-label="Dr. Rolando Vargas Calvetty, inicio">
       <Image src={logo} alt="" width={56} height={36} class="h-9 w-auto" loading="eager" />
       <span class="leading-tight">
@@ -26,7 +32,10 @@ const cta = `${base}/cita`;
 
     <nav aria-label="Principal" class="hidden items-center gap-7 md:flex">
       {
-        links.map((l) => (
+        links.map((l) =>
+          l.children ? (
+            <ServicesMenu client:load base={base} current={here === l.href} />
+          ) : (
           <a
             href={l.href}
             class="text-[0.95rem] font-medium text-ink-soft hover:text-teal-700"
@@ -34,7 +43,8 @@ const cta = `${base}/cita`;
           >
             {l.label}
           </a>
-        ))
+          ),
+        )
       }
       <a href={cta} class="btn btn-primary !min-h-11 !py-2">Solicitar cita</a>
     </nav>

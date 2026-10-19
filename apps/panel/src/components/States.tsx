@@ -1,5 +1,6 @@
-import { AlertCircle, Inbox, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import type { ReactNode } from "react";
+import logo from "../assets/logo.png";
 import { ApiError } from "../lib/api";
 
 export function Loading({ label = "Cargando…" }: { label?: string }) {
@@ -13,7 +14,10 @@ export function Loading({ label = "Cargando…" }: { label?: string }) {
 export function Empty({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <div className="card flex flex-col items-center gap-2 px-6 py-10 text-center">
-      <Inbox aria-hidden className="text-teal-500" size={32} />
+      <span aria-hidden className="relative mb-1 flex h-20 w-20 items-center justify-center">
+        <span className="absolute inset-0 rounded-full bg-teal-100/80" />
+        <img src={logo} alt="" className="float-slow relative h-10 w-auto" />
+      </span>
       <p className="font-display text-xl text-teal-900">{title}</p>
       {children && <p className="max-w-md text-ink-soft">{children}</p>}
     </div>

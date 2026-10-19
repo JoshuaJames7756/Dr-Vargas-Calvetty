@@ -1,5 +1,5 @@
 ---
-import { Clock, ExternalLink, MapPin, MessageCircle, Phone, CalendarCheck } from "lucide-react";
+import { CalendarCheck, Clock, ExternalLink, MapPin, MessageCircle, Navigation, Phone } from "lucide-react";
 import { CLINIC, whatsappLink } from "@dr-vargas/shared";
 
 interface Props {
@@ -8,84 +8,28 @@ interface Props {
 }
 const { asPage = false } = Astro.props;
 const Heading = asPage ? "h1" : "h2";
-
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-const place = `${CLINIC.address.line1}, ${CLINIC.address.city}, Bolivia`;
-const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place)}`;
-// Mapa incrustado sin clave de API. Si no carga, queda visible el enlace "Abrir en Google Maps".
-const embedUrl = `https://www.google.com/maps?q=${encodeURIComponent(place)}&output=embed&hl=es`;
-const item = "flex gap-4 rounded-2xl bg-teal-800/55 p-4 ring-1 ring-white/10 transition-colors hover:bg-teal-800/80";
-const icon = "mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-700/70 text-teal-100";
+const { lat, lng, url: mapsUrl } = CLINIC.maps;
+// Mapa incrustado sin clave de API, centrado en la ubicacion real. Si no carga, queda el boton "Como llegar".
+const embedUrl = `https://www.google.com/maps?q=${lat},${lng}&z=17&output=embed&hl=es`;
+const tile = "card card-lift flex flex-col justify-between p-6";
+const chip = "flex h-11 w-11 items-center justify-center rounded-2xl";
 ---
 
-<section id="contacto" class="on-dark relative isolate scroll-mt-24 overflow-hidden bg-teal-900 py-14 text-teal-50 md:py-20">
-  <div class="pointer-events-none absolute -left-24 top-10 -z-10 h-72 w-72 rounded-full bg-teal-700/25 blur-3xl" aria-hidden="true"></div>
+<section id="contacto" class="bg-dots relative isolate scroll-mt-24 overflow-hidden bg-teal-50 py-14 md:py-20">
+  <div class="blob -right-24 -top-10 h-80 w-80 bg-teal-300/40"></div>
+  <div class="blob -left-24 bottom-0 h-72 w-72 bg-rose-100/70"></div>
   <div class="container-page">
-    <div data-reveal class="max-w-2xl">
-      <p class="eyebrow !text-teal-300">Contacto y ubicación</p>
-      <Heading class="mt-3 text-3xl !text-white sm:text-4xl">Visita el consultorio o escríbenos</Heading>
-      <p class="mt-3 text-teal-100">Estamos en el Edificio V&amp;V NUR, frente al Parque Fidel Anze. Escríbenos por WhatsApp o pide tu cita en línea.</p>
+    <div data-reveal class="mx-auto max-w-2xl text-center">
+      <p class="eyebrow">Contacto y ubicación</p>
+      <Heading class="mt-3 text-3xl sm:text-4xl">Encuéntranos o escríbenos</Heading>
+      <p class="mt-3 text-ink-soft">Estamos en el Edificio V&amp;V NUR, frente al Parque Fidel Anze. Elige la forma que te quede más cómoda.</p>
     </div>
 
-    <div class="mt-10 grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
-      <div class="flex flex-col gap-3" data-reveal style="--d: 80ms">
-        <div class={item}>
-          <span class={icon}><MapPin aria-hidden="true" size={20} /></span>
-          <address class="not-italic">
-            <p class="font-semibold text-white">Dirección</p>
-            <p class="text-teal-100">
-              {CLINIC.address.line1}<br />
-              {CLINIC.address.line2}, {CLINIC.address.floor.toLowerCase()}<br />
-              {CLINIC.address.city}
-            </p>
-          </address>
-        </div>
-        <div class={item}>
-          <span class={icon}><Phone aria-hidden="true" size={20} /></span>
-          <div>
-            <p class="font-semibold text-white">Teléfonos</p>
-            <p class="text-teal-100">
-              {CLINIC.phones.landlines.map((p) => (
-                <>
-                  <a class="underline-offset-4 hover:underline" href={`tel:+591${p}`}>{p}</a>
-                  {" · "}
-                </>
-              ))}
-              <a class="underline-offset-4 hover:underline" href={`tel:+${CLINIC.whatsappCountryCode}${CLINIC.phones.whatsapp}`}>{CLINIC.phones.whatsapp}</a>
-            </p>
-          </div>
-        </div>
-        <div class={item}>
-          <span class={icon}><Clock aria-hidden="true" size={20} /></span>
-          <div>
-            <p class="font-semibold text-white">Horario de atención</p>
-            <p class="text-teal-100">{CLINIC.hours.label}</p>
-          </div>
-        </div>
-        {
-          CLINIC.social.facebook && (
-            <div class={item}>
-              <span class={icon}><ExternalLink aria-hidden="true" size={20} /></span>
-              <div>
-                <p class="font-semibold text-white">Facebook</p>
-                <a href={CLINIC.social.facebook} target="_blank" rel="noopener noreferrer" class="text-teal-100 underline underline-offset-4 hover:text-white">
-                  Página del consultorio<span class="sr-only"> (se abre en una pestaña nueva)</span>
-                </a>
-              </div>
-            </div>
-          )
-        }
-        <div class="mt-2 flex flex-col gap-3 sm:flex-row">
-          <a href={whatsappLink("Hola, quisiera consultar sobre una cita con el Dr. Vargas.")} target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp flex-1">
-            <MessageCircle aria-hidden="true" size={20} /> Abrir WhatsApp
-          </a>
-          <a href={`${base}/cita`} class="btn btn-light flex-1"><CalendarCheck aria-hidden="true" size={20} /> Solicitar cita</a>
-        </div>
-        <p class="text-sm text-teal-200">WhatsApp se abre con un mensaje sugerido; tú decides si lo envías.</p>
-      </div>
-
-      <div data-reveal style="--d: 160ms" class="relative min-h-80 overflow-hidden rounded-[var(--radius-card)] bg-teal-800 ring-1 ring-white/15 lg:min-h-[28rem]">
-        <p class="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-teal-100">El mapa se está cargando. Si no aparece, usa el botón «Abrir en Google Maps».</p>
+    <!-- MAPA con la ficha de llegada encima -->
+    <div data-reveal style="--d: 80ms" class="relative mt-10 overflow-hidden rounded-[2rem] border border-line bg-white shadow-soft">
+      <div class="relative h-72 bg-teal-100 sm:h-96 lg:h-[30rem]">
+        <p class="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-teal-900">El mapa se está cargando. Si no aparece, usa el botón «Cómo llegar».</p>
         <iframe
           title="Mapa con la ubicación del consultorio"
           src={embedUrl}
@@ -93,15 +37,65 @@ const icon = "mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded
           loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"
           allowfullscreen></iframe>
-        <a
-          href={mapsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="absolute bottom-3 left-3 inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-sm font-semibold text-teal-900 shadow-lg transition hover:bg-teal-50"
-        >
-          <MapPin aria-hidden="true" size={16} /> Abrir en Google Maps<span class="sr-only"> (se abre en una pestaña nueva)</span>
+      </div>
+      <div class="p-6 sm:p-7 lg:absolute lg:left-6 lg:top-6 lg:w-[21rem] lg:rounded-3xl lg:bg-white lg:shadow-[0_20px_50px_-20px_rgb(10_63_66/0.45)] lg:ring-1 lg:ring-line">
+        <address class="not-italic">
+          <p class="flex items-center gap-2 font-display text-xl text-teal-900"><MapPin aria-hidden="true" size={20} class="text-teal-600" /> Consultorio</p>
+          <p class="mt-2 text-ink-soft">
+            {CLINIC.address.line1}<br />
+            {CLINIC.address.line2}, {CLINIC.address.floor.toLowerCase()}<br />
+            {CLINIC.address.city}
+          </p>
+        </address>
+        <p class="mt-4 flex items-start gap-2 text-ink-soft"><Clock aria-hidden="true" size={18} class="mt-1 shrink-0 text-teal-600" /> {CLINIC.hours.label}</p>
+        <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary mt-5 w-full">
+          <Navigation aria-hidden="true" size={18} /> Cómo llegar<span class="sr-only"> (se abre en una pestaña nueva)</span>
         </a>
       </div>
     </div>
+
+    <!-- FORMAS DE CONTACTO -->
+    <ul class="mt-6 grid gap-5 md:grid-cols-3">
+      <li data-reveal style="--d: 0ms">
+        <div class={tile + " h-full"}>
+          <span class={chip + " bg-teal-100 text-teal-800"}><Phone aria-hidden="true" size={22} /></span>
+          <div><h3 class="mt-4 text-xl">Llámanos</h3>
+          <p class="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-lg">
+            {CLINIC.phones.landlines.map((p) => <a class="font-semibold text-teal-800 underline-offset-4 hover:underline" href={`tel:+591${p}`}>{p}</a>)}
+            <a class="font-semibold text-teal-800 underline-offset-4 hover:underline" href={`tel:+${CLINIC.whatsappCountryCode}${CLINIC.phones.whatsapp}`}>{CLINIC.phones.whatsapp}</a>
+          </p>
+          </div><p class="mt-5 text-sm text-ink-soft">{CLINIC.hours.label}</p>
+        </div>
+      </li>
+      <li data-reveal style="--d: 90ms">
+        <div class={tile + " h-full"}>
+          <span class={chip + " bg-[#1f7a4d] text-white"}><MessageCircle aria-hidden="true" size={22} /></span>
+          <h3 class="mt-4 text-xl">WhatsApp</h3>
+          <p class="mt-2 text-ink-soft">Es el canal principal. Se abre con un mensaje sugerido; tú decides si lo envías.</p>
+          <a href={whatsappLink("Hola, quisiera consultar sobre una cita con el Dr. Vargas.")} target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp mt-6 w-full">
+            Abrir WhatsApp
+          </a>
+        </div>
+      </li>
+      <li data-reveal style="--d: 180ms">
+        <div class={tile + " h-full"}>
+          <span class={chip + " bg-rose-100 text-rose-500"}><CalendarCheck aria-hidden="true" size={22} /></span>
+          <h3 class="mt-4 text-xl">Solicita tu cita</h3>
+          <p class="mt-2 text-ink-soft">Elige el servicio y un horario libre. El consultorio te confirma por WhatsApp.</p>
+          <a href={`${base}/cita`} class="btn btn-outline mt-6 w-full !border-teal-700 !text-teal-800 hover:!bg-teal-50">Solicitar cita</a>
+        </div>
+      </li>
+    </ul>
+
+    {
+      CLINIC.social.facebook && (
+        <p data-reveal class="mt-8 text-center text-ink-soft">
+          También en{" "}
+          <a href={CLINIC.social.facebook} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-semibold text-teal-800 underline underline-offset-4">
+            Facebook <ExternalLink aria-hidden="true" size={14} /><span class="sr-only"> (se abre en una pestaña nueva)</span>
+          </a>
+        </p>
+      )
+    }
   </div>
 </section>

@@ -83,14 +83,14 @@ test.describe("sitio publico", () => {
     const nav = page.getByRole("navigation", { name: isMobile ? "Menú principal" : "Principal" });
     await nav.getByRole("link", { name: "Contacto" }).click();
     await expect(page).toHaveURL(/\/contacto\/?$/);
-    await expect(page.getByText("Lunes a viernes, de 14:00 a 18:00")).toBeVisible();
-    await expect(page.getByRole("link", { name: /Página del consultorio/ })).toHaveAttribute("href", "https://www.facebook.com/ginecologocochabamba/");
+    await expect(page.getByText("Lunes a viernes, de 14:00 a 18:00").first()).toBeVisible();
+    await expect(page.getByRole("link", { name: /Facebook/ }).first()).toHaveAttribute("href", "https://www.facebook.com/ginecologocochabamba/");
   });
 
   test("contacto: mapa visible y el pie no repite la direccion", async ({ page }) => {
     await page.goto("/contacto/");
     await expect(page.locator('iframe[title^="Mapa"]')).toBeAttached();
-    await expect(page.getByRole("link", { name: /Abrir en Google Maps/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Cómo llegar/ }).first()).toBeVisible();
     await expect(page.locator("footer address")).toHaveCount(0);
     await page.goto("/servicios/");
     await expect(page.locator("footer address")).toHaveCount(1);
@@ -103,13 +103,13 @@ test.describe("sitio publico", () => {
       await page.goto("/");
       await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
       await expect.poll(() => page.locator("[data-reveal]:not(.is-in)").count()).toBeLessThan(3);
-      await expect(page.getByRole("heading", { name: "Visita el consultorio o escríbenos" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Encuéntranos o escríbenos" })).toBeVisible();
     });
   });
 
   test("las preguntas frecuentes se abren y se cierran", async ({ page }) => {
     await page.goto("/preguntas/");
-    const q = page.getByText("¿Necesito crear una cuenta para pedir una cita?");
+    const q = page.getByText("¿Qué datos necesito para pedir una cita?");
     await expect(page.getByText(/Solo necesitas tu nombre/)).toBeHidden();
     await q.click();
     await expect(page.getByText(/Solo necesitas tu nombre/)).toBeVisible();

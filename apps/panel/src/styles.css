@@ -52,6 +52,9 @@
     outline-offset: 2px;
     border-radius: 6px;
   }
+  .on-dark :focus-visible {
+    outline-color: var(--color-teal-200);
+  }
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -138,5 +141,25 @@
     background: #fff;
     font: inherit;
     color: var(--color-ink);
+  }
+}
+
+/* Decoracion y movimiento suave (se apaga con "reducir movimiento"). */
+.bg-dots {
+  background-image: radial-gradient(rgb(11 124 128 / 0.12) 1.3px, transparent 1.3px);
+  background-size: 24px 24px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .float-slow {
+    animation: float-slow 9s ease-in-out infinite;
+  }
+  @keyframes float-slow {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(10px) rotate(2deg);
+    }
   }
 }

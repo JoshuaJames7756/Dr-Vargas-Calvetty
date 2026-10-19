@@ -1,0 +1,38 @@
+---
+import { ArrowRight, HeartPulse, Ribbon, Stethoscope } from "lucide-react";
+import { SERVICE_GROUPS } from "../data/services";
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const icons = { ginecologia: HeartPulse, oncologia: Ribbon, mastologia: Stethoscope } as const;
+---
+
+<ul class="grid gap-5 md:grid-cols-3">
+  {
+    SERVICE_GROUPS.map((g, i) => {
+      const Icon = icons[g.id];
+      return (
+        <li data-reveal style={`--d: ${i * 90}ms`}>
+          <a href={`${base}/servicios#${g.id}`} class="card card-lift group relative flex h-full flex-col overflow-hidden p-6 md:p-7">
+            <span aria-hidden="true" class="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-teal-100/70 transition-transform duration-500 group-hover:scale-125" />
+            <span class="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-700 text-white">
+              <Icon aria-hidden="true" size={24} />
+            </span>
+            <h3 class="relative mt-5 text-2xl">{g.title}</h3>
+            <p class="relative mt-2 text-ink-soft">{g.intro}</p>
+            {g.items.length > 0 && (
+              <ul class="relative mt-4 flex flex-wrap gap-2">
+                {g.items.slice(0, 3).map((item) => (
+                  <li class="rounded-full bg-teal-50 px-3 py-1 text-sm text-teal-900">{item.split(",")[0]}</li>
+                ))}
+                {g.items.length > 3 && <li class="rounded-full px-1 py-1 text-sm text-ink-soft">y {g.items.length - 3} más</li>}
+              </ul>
+            )}
+            <span class="relative mt-auto inline-flex items-center gap-2 pt-6 font-semibold text-teal-700">
+              Ver servicios <ArrowRight aria-hidden="true" size={18} class="nudge" />
+            </span>
+          </a>
+        </li>
+      );
+    })
+  }
+</ul>

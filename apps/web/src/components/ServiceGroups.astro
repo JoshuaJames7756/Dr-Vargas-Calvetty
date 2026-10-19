@@ -3,37 +3,63 @@ import { Check } from "lucide-react";
 import { SERVICE_GROUPS } from "../data/services";
 import Pending from "./Pending.astro";
 import Sample from "./Sample.astro";
+
+/** Lista completa de servicios. Ginecologia va a todo el ancho (lista en columnas) y debajo Oncologia y Mastologia, sin huecos laterales. */
+const [gineco, ...rest] = SERVICE_GROUPS;
+const Item = (item: string) => item;
 ---
 
-<div class="grid gap-6 lg:grid-cols-3">
+<div class="grid gap-6">
   {
-    SERVICE_GROUPS.map((g) => (
-      <article class="card flex flex-col p-6 md:p-7" id={g.id}>
-        <h3 class="text-2xl">{g.title}</h3>
-        <p class="mt-2 text-ink-soft">{g.intro}</p>
-        {g.items.length > 0 ? (
-          <ul class="mt-5 space-y-3">
-            {g.items.map((item) => (
-              <li class="flex gap-3">
-                <Check aria-hidden="true" size={20} class="mt-0.5 shrink-0 text-teal-600" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div class="mt-5">
-            <p class="text-ink-soft">Consulta por WhatsApp para saber qué atención de mastología necesitas.</p>
-            <Sample label="Servicios de ejemplo. El doctor indica cuáles ofrece.">
-              <ul class="space-y-2 text-ink">
-                <li>[Servicio de mastología 1]</li>
-                <li>[Servicio de mastología 2]</li>
-                <li>[Servicio de mastología 3]</li>
-              </ul>
-            </Sample>
-            <Pending label="Servicios de Mastología: el doctor debe proporcionarlos o validarlos." />
-          </div>
-        )}
+    gineco && (
+      <article class="card scroll-mt-28 p-6 md:p-8" id={gineco.id} data-reveal>
+        <h3 class="text-2xl">{gineco.title}</h3>
+        <p class="mt-2 text-ink-soft">{gineco.intro}</p>
+        <ul class="mt-6 grid gap-x-10 gap-y-3.5 sm:grid-cols-2 lg:grid-cols-3">
+          {gineco.items.map((item) => (
+            <li class="flex items-start gap-3">
+              <span aria-hidden="true" class="mt-[0.2rem] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-700">
+                <Check size={13} strokeWidth={3} />
+              </span>
+              <span class="leading-snug">{Item(item)}</span>
+            </li>
+          ))}
+        </ul>
       </article>
-    ))
+    )
   }
+  <div class="grid items-stretch gap-6 md:grid-cols-2">
+    {
+      rest.map((g, i) => (
+        <article class="card scroll-mt-28 p-6 md:p-8" id={g.id} data-reveal style={`--d: ${(i + 1) * 90}ms`}>
+          <h3 class="text-2xl">{g.title}</h3>
+          <p class="mt-2 text-ink-soft">{g.intro}</p>
+          {g.items.length > 0 ? (
+            <ul class="mt-6 space-y-3.5">
+              {g.items.map((item) => (
+                <li class="flex items-start gap-3">
+                  <span aria-hidden="true" class="mt-[0.2rem] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-700">
+                    <Check size={13} strokeWidth={3} />
+                  </span>
+                  <span class="leading-snug">{item}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div class="mt-5">
+              <p class="text-ink-soft">Consulta por WhatsApp para saber qué atención de mastología necesitas.</p>
+              <Sample label="Servicios de ejemplo. El doctor indica cuáles ofrece.">
+                <ul class="space-y-2 text-ink">
+                  <li>[Servicio de mastología 1]</li>
+                  <li>[Servicio de mastología 2]</li>
+                  <li>[Servicio de mastología 3]</li>
+                </ul>
+              </Sample>
+              <Pending label="Servicios de Mastología: el doctor debe proporcionarlos o validarlos." />
+            </div>
+          )}
+        </article>
+      ))
+    }
+  </div>
 </div>
