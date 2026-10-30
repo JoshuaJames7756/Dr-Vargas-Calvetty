@@ -162,3 +162,7 @@ Pantalla `/panel/resumen`: citas del mes, atendidas, inasistencias, porcentaje d
 
 - Mensajes de contacto: máximo 3 por teléfono cada hora (`modules/contact/service.ts`), además de Turnstile. Solicitudes de cita: máximo 3 pendientes por teléfono.
 - Política de contenido (CSP) en modo **solo reporte** en el sitio (`scripts/assemble.mjs`) y en el panel (`apps/api/src/index.ts`). No bloquea nada: avisa en la consola del navegador. Ver `docs/lanzamiento.md` para decidir cuándo pasar a modo bloqueo.
+
+## Búsqueda en la agenda
+
+La Agenda tiene un buscador sobre el rango de fechas cargado (nombre, teléfono o servicio, sin tildes). Se filtra en el navegador con las citas que el panel ya recibió, así que no agrega consultas ni cambia la API (`apps/panel/src/lib/filter.ts`).
