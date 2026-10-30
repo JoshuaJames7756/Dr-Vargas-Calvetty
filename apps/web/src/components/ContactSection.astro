@@ -32,7 +32,7 @@ const chip = "flex h-11 w-11 items-center justify-center rounded-2xl";
         <p class="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-teal-900">El mapa se está cargando. Si no aparece, usa el botón «Cómo llegar».</p>
         <iframe
           title="Mapa con la ubicación del consultorio"
-          src={embedUrl}
+          data-src={embedUrl}
           class="absolute inset-0 h-full w-full border-0"
           loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"
@@ -99,3 +99,26 @@ const chip = "flex h-11 w-11 items-center justify-center rounded-2xl";
     }
   </div>
 </section>
+
+<script>
+  // El mapa de Google (y sus cookies) solo se carga cuando la persona se acerca a esa seccion.
+  const map = document.querySelector<HTMLIFrameElement>("iframe[data-src]");
+  if (map) {
+    const load = () => {
+      map.src = map.dataset.src!;
+      map.removeAttribute("data-src");
+    };
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            load();
+            io.disconnect();
+          }
+        },
+        { rootMargin: "300px" },
+      );
+      io.observe(map);
+    } else load();
+  }
+</script>

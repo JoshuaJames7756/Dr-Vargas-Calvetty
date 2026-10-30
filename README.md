@@ -166,3 +166,9 @@ Pantalla `/panel/resumen`: citas del mes, atendidas, inasistencias, porcentaje d
 ## Búsqueda en la agenda
 
 La Agenda tiene un buscador sobre el rango de fechas cargado (nombre, teléfono o servicio, sin tildes). Se filtra en el navegador con las citas que el panel ya recibió, así que no agrega consultas ni cambia la API (`apps/panel/src/lib/filter.ts`).
+
+## Rendimiento del sitio público
+
+- Los menús del encabezado (Servicios y móvil) usan JavaScript nativo dentro de `Header.astro`: las páginas públicas ya no cargan React, salvo `/cita`, que lo necesita para el formulario.
+- El CSS va dentro del HTML (`inlineStylesheets: "always"`), las fuentes principales se precargan y la foto del inicio tiene prioridad alta.
+- El mapa de Google se carga solo cuando la persona se acerca a esa sección, para no cargar sus scripts ni cookies de terceros al abrir la página.

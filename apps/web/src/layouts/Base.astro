@@ -5,6 +5,8 @@ import Header from "../components/Header.astro";
 import WhatsAppFab from "../components/WhatsAppFab.astro";
 import { CLINIC } from "@dr-vargas/shared";
 import { SHOW_PENDING } from "../lib/pending";
+import figtreeFont from "@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2?url";
+import fraunces from "@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2?url";
 
 interface Props {
   title: string;
@@ -46,6 +48,8 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <link rel="preload" as="font" type="font/woff2" href={figtreeFont} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={fraunces} crossorigin />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#0a3f42" />

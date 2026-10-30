@@ -131,6 +131,20 @@ test.describe("sitio publico", () => {
     expect(overflow).toBeLessThanOrEqual(0);
   });
 
+  test("el menu de servicios (escritorio) se abre con el clic, enlaza a las areas y se cierra con Escape", async ({ page, isMobile }) => {
+    test.skip(isMobile, "El menu de servicios es solo de escritorio");
+    await page.goto("/");
+    const toggle = page.getByRole("button", { name: "Mostrar especialidades" });
+    await toggle.click();
+    const panel = page.locator("#svc-panel");
+    await expect(panel).toBeVisible();
+    await expect(page.getByRole("button", { name: "Ocultar especialidades" })).toHaveAttribute("aria-expanded", "true");
+    await expect(panel.getByRole("link", { name: "Oncología" })).toHaveAttribute("href", /\/servicios#oncologia$/);
+    await page.keyboard.press("Escape");
+    await expect(panel).toBeHidden();
+    await expect(page.getByRole("button", { name: "Mostrar especialidades" })).toBeFocused();
+  });
+
   test("el menu movil se abre, se cierra con Escape y devuelve el foco", async ({ page, isMobile }) => {
     test.skip(!isMobile, "solo aplica a movil");
     await page.goto("/");
@@ -148,7 +162,7 @@ test.describe("solicitud de cita", () => {
     await mockApi(page);
     await fillUntilReview(page);
     await expect(page.getByRole("heading", { name: "Revisa tu solicitud" })).toBeVisible();
-    await expect(page.getByText("Control prenatal").first()).toBeVisible();
+    await expect(page.getByRole("main").getByText("Control prenatal").first()).toBeVisible();
 
     const send = page.getByRole("button", { name: "Enviar solicitud" });
     await expect(send).toBeEnabled();
