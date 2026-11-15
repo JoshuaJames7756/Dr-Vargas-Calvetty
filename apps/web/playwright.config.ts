@@ -7,7 +7,8 @@ export default defineConfig({
   fullyParallel: true,
   retries: 0,
   reporter: [["list"]],
-  use: { baseURL: `http://localhost:${PORT}`, locale: "es-BO", timezoneId: "America/La_Paz", reducedMotion: "reduce" },
+  // PW_CHROMIUM: ruta opcional a un Chromium ya instalado (entornos donde no se puede descargar el navegador).
+  use: { ...(process.env.PW_CHROMIUM ? { launchOptions: { executablePath: process.env.PW_CHROMIUM } } : {}), baseURL: `http://localhost:${PORT}`, locale: "es-BO", timezoneId: "America/La_Paz", reducedMotion: "reduce" },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
     { name: "mobile", use: { ...devices["Pixel 7"] } },

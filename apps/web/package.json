@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
-    "test:e2e": "PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA astro build && playwright test"
+    "test:e2e": "PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA astro build && playwright test",
+    "test:e2e:full": "PUBLIC_MODE=full pnpm test:e2e"
   },
   "dependencies": {
     "@astrojs/react": "^7.0.1",

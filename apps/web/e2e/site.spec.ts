@@ -1,6 +1,9 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
+/** Version 1 ("lite", por defecto): la cita se pide por WhatsApp. Con PUBLIC_MODE=full se prueba la agenda en linea (Version 3). */
+const FULL = process.env.PUBLIC_MODE === "full";
+
 const SERVICE_ID = "3f2b0f3e-6c1d-4a58-9a52-7d1f2d5b1a10";
 
 /** API simulada: estas pruebas verifican la interfaz, no el servidor (esas pruebas viven en apps/api). */
@@ -83,7 +86,8 @@ test.describe("sitio publico", () => {
     const nav = page.getByRole("navigation", { name: isMobile ? "Menú principal" : "Principal" });
     await nav.getByRole("link", { name: "Contacto" }).click();
     await expect(page).toHaveURL(/\/contacto\/?$/);
-    await expect(page.getByText("Lunes a viernes, de 14:00 a 18:00").first()).toBeVisible();
+    if (FULL) await expect(page.getByText("Lunes a viernes, de 14:00 a 18:00").first()).toBeVisible();
+    else await expect(page.getByText(/Coordina tu día y hora/).first()).toBeVisible();
     await expect(page.getByRole("link", { name: /Facebook/ }).first()).toHaveAttribute("href", "https://www.facebook.com/ginecologocochabamba/");
   });
 
@@ -110,11 +114,11 @@ test.describe("sitio publico", () => {
   test("las preguntas frecuentes se abren y se cierran", async ({ page }) => {
     await page.goto("/preguntas/");
     const q = page.getByText("¿Qué datos necesito para pedir una cita?");
-    await expect(page.getByText(/Solo necesitas tu nombre/)).toBeHidden();
+    await expect(page.getByText(/No pedimos diagnósticos/)).toBeHidden();
     await q.click();
-    await expect(page.getByText(/Solo necesitas tu nombre/)).toBeVisible();
+    await expect(page.getByText(/No pedimos diagnósticos/)).toBeVisible();
     await q.click();
-    await expect(page.getByText(/Solo necesitas tu nombre/)).toBeHidden();
+    await expect(page.getByText(/No pedimos diagnósticos/)).toBeHidden();
   });
 
   test("los enlaces externos usan rel noopener", async ({ page }) => {
@@ -157,7 +161,8 @@ test.describe("sitio publico", () => {
   });
 });
 
-test.describe("solicitud de cita", () => {
+test.describe("solicitud de cita (agenda en linea, modo full)", () => {
+  test.skip(!FULL, "Solo en modo full (Version 3)");
   test("flujo completo: queda PENDIENTE y nunca dice confirmada", async ({ page }) => {
     await mockApi(page);
     await fillUntilReview(page);
@@ -205,6 +210,68 @@ test.describe("solicitud de cita", () => {
   });
 });
 
+test.describe("cita por WhatsApp (modo lite, Version 1)", () => {
+  test.skip(FULL, "Solo en modo lite");
+
+  test("valida nombre y servicio y no abre WhatsApp si faltan", async ({ page }) => {
+    await page.addInitScript(() => ((window as unknown as { __opened: string[] }).__opened = []));
+    await page.addInitScript(() => {
+      window.open = ((url?: string | URL) => ((window as unknown as { __opened: string[] }).__opened.push(String(url)), null)) as typeof window.open;
+    });
+    await page.goto("/cita/");
+    await page.getByRole("button", { name: "Abrir WhatsApp con mi mensaje" }).click();
+    await expect(page.getByText("Escribe tu nombre para que el consultorio sepa quién eres.")).toBeVisible();
+    await expect(page.getByText("Elige el servicio que necesitas.")).toBeVisible();
+    await expect(page.getByLabel("Tu nombre completo")).toBeFocused();
+    expect(await page.evaluate(() => (window as unknown as { __opened: string[] }).__opened.length)).toBe(0);
+  });
+
+  test("arma el mensaje, lo muestra y abre wa.me con el texto codificado", async ({ page }) => {
+    await page.addInitScript(() => {
+      (window as unknown as { __opened: string[] }).__opened = [];
+      window.open = ((url?: string | URL) => ((window as unknown as { __opened: string[] }).__opened.push(String(url)), null)) as typeof window.open;
+    });
+    await page.goto("/cita/");
+    await page.getByLabel("Tu nombre completo").fill("María Pérez");
+    await page.getByLabel("¿Para qué servicio?").selectOption("Oncología");
+    await page.getByLabel(/Día que prefieres/).fill("2030-05-14");
+    await page.getByLabel(/Horario que prefieres/).selectOption("en la tarde");
+    await page.getByLabel(/Motivo breve/).fill("primera consulta");
+    const preview = page.locator("#wa-preview");
+    await expect(preview).toContainText("Hola, soy María Pérez.");
+    await expect(preview).toContainText("para Oncología");
+    await expect(preview).toContainText("martes, 14 de mayo");
+    await expect(preview).toContainText("Motivo: primera consulta.");
+
+    await page.getByRole("button", { name: "Abrir WhatsApp con mi mensaje" }).click();
+    const opened = await page.evaluate(() => (window as unknown as { __opened: string[] }).__opened);
+    expect(opened).toHaveLength(1);
+    expect(opened[0]).toMatch(/^https:\/\/wa\.me\/59170344225\?text=/);
+    expect(decodeURIComponent(opened[0]!.split("?text=")[1]!)).toContain("Hola, soy María Pérez.");
+    await expect(page.getByText("Abrimos WhatsApp con tu mensaje.")).toBeVisible();
+    await expect(page.getByRole("link", { name: /Toca aquí para abrirlo/ })).toHaveAttribute("href", /wa\.me\/59170344225\?text=/);
+  });
+
+  test("ningun texto habla de pendientes o confirmaciones, no hay acceso al panel ni horarios sin confirmar", async ({ page }) => {
+    for (const path of ["/", "/cita/", "/preguntas/", "/contacto/", "/servicios/", "/doctor/", "/privacidad/"]) {
+      await page.goto(path);
+      const text = (await page.locator("body").innerText()).toLowerCase();
+      expect(text, path).not.toMatch(/pendiente|confirmaremos|te confirma|tu solicitud|14:00|ejemplo|acceso del consultorio/);
+      await expect(page.locator('a[href^="/panel"]'), path).toHaveCount(0);
+    }
+  });
+
+  test("la pagina de cita no carga Turnstile ni consulta la API", async ({ page }) => {
+    const hits: string[] = [];
+    page.on("request", (r) => {
+      if (/challenges\.cloudflare\.com|\/api\//.test(r.url())) hits.push(r.url());
+    });
+    await page.goto("/cita/");
+    await page.waitForLoadState("networkidle");
+    expect(hits).toEqual([]);
+  });
+});
+
 test.describe("accesibilidad (axe, WCAG 2.2 AA)", () => {
   for (const path of ["/", "/cita/", "/privacidad/", "/servicios/", "/doctor/", "/preguntas/", "/contacto/"]) {
     test(`sin violaciones serias en ${path}`, async ({ page }) => {
@@ -218,6 +285,7 @@ test.describe("accesibilidad (axe, WCAG 2.2 AA)", () => {
   }
 
   test("el paso de revision tambien es accesible", async ({ page }) => {
+    test.skip(!FULL, "Solo en modo full (Version 3)");
     await mockApi(page);
     await fillUntilReview(page);
     await expect(page.getByRole("heading", { name: "Revisa tu solicitud" })).toBeVisible();

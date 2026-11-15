@@ -1,11 +1,13 @@
 ---
 import Base from "../layouts/Base.astro";
 import BookingFlow from "../modules/booking/BookingFlow.tsx";
+import WhatsAppRequest from "../components/WhatsAppRequest.astro";
+import { COPY, LITE } from "../lib/mode";
 ---
 
 <Base
   title="Solicitar cita"
-  description="Solicita tu cita con el Dr. Rolando Vargas Calvetty en Cochabamba. El consultorio revisa tu solicitud y te confirma por WhatsApp."
+  description={COPY.citaDescription}
   path="/cita"
 >
   <section class="py-12 md:py-16">
@@ -14,11 +16,10 @@ import BookingFlow from "../modules/booking/BookingFlow.tsx";
         <p class="eyebrow">Solicitud de cita</p>
         <h1 class="mt-3 text-4xl">Solicita tu cita</h1>
         <p class="mt-3 text-ink-soft">
-          El consultorio revisará tu solicitud y te confirmará por WhatsApp. Hasta entonces, la cita no está
-          confirmada.
+          {COPY.citaIntro}
         </p>
       </div>
-      <BookingFlow client:load />
+      {LITE ? <WhatsAppRequest /> : <BookingFlow client:load />}
     </div>
   </section>
 </Base>

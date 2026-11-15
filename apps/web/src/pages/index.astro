@@ -9,14 +9,12 @@ import Faq from "../components/Faq.astro";
 import ServiceTiles from "../components/ServiceTiles.astro";
 import Base from "../layouts/Base.astro";
 import { FAQ_CITAS } from "../data/faq";
+import { COPY } from "../lib/mode";
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-const steps = [
-  { icon: ListChecks, title: "Elige el servicio", text: "Selecciona el motivo de tu consulta entre los servicios disponibles." },
-  { icon: CalendarCheck, title: "Escoge un horario", text: "Verás solo los horarios que realmente están libres en la agenda." },
-  { icon: MessageCircle, title: "Recibe la confirmación", text: "El consultorio revisa tu solicitud y te confirma por WhatsApp." },
-];
+const icons = [ListChecks, CalendarCheck, MessageCircle];
+const steps = COPY.steps.map((s, i) => ({ ...s, icon: icons[i]! }));
 ---
 
 <Base
@@ -59,7 +57,7 @@ const steps = [
             <MessageCircle aria-hidden="true" size={20} /> Escribir por WhatsApp
           </a>
         </div>
-        <p class="mt-4 text-sm text-teal-200">Tu solicitud queda pendiente hasta que el consultorio la confirme.</p>
+        <p class="mt-4 text-sm text-teal-200">{COPY.heroNote}</p>
       </div>
 
       <!-- FOTO PROVISIONAL: reemplazar por retrato profesional cuando exista (src/assets/doctor-provisional.jpg). -->

@@ -1,0 +1,144 @@
+---
+import { MessageCircle } from "lucide-react";
+import { CLINIC, whatsappLink } from "@dr-vargas/shared";
+import { SERVICE_GROUPS } from "../data/services";
+
+/**
+ * Version 1: la cita se pide por WhatsApp. El formulario arma el mensaje y abre WhatsApp; no se guarda nada en ningun servidor.
+ * Abrir WhatsApp no equivale a haber enviado el mensaje: la persona debe pulsar "Enviar" en WhatsApp.
+ */
+const services = [...SERVICE_GROUPS.map((g) => g.title), "Otra consulta o no estoy segura"];
+---
+
+<form id="wa-form" class="card mx-auto max-w-2xl space-y-5 p-6 sm:p-8" novalidate data-wa={whatsappLink()} data-doctor={CLINIC.doctorName}>
+  <div>
+    <label for="wa-name" class="block font-semibold">Tu nombre completo</label>
+    <input id="wa-name" name="name" type="text" class="field mt-1 w-full" autocomplete="name" maxlength="80" required aria-describedby="wa-name-err" />
+    <p id="wa-name-err" class="mt-1 hidden text-sm font-medium text-[#7a1810]" role="alert"></p>
+  </div>
+
+  <div>
+    <label for="wa-service" class="block font-semibold">¿Para qué servicio?</label>
+    <select id="wa-service" name="service" class="field mt-1 w-full" required aria-describedby="wa-service-err">
+      <option value="">Elige una opción</option>
+      {services.map((s) => <option value={s}>{s}</option>)}
+    </select>
+    <p id="wa-service-err" class="mt-1 hidden text-sm font-medium text-[#7a1810]" role="alert"></p>
+  </div>
+
+  <div class="grid gap-5 sm:grid-cols-2">
+    <div>
+      <label for="wa-date" class="block font-semibold">Día que prefieres <span class="font-normal text-ink-soft">(opcional)</span></label>
+      <input id="wa-date" name="date" type="date" class="field mt-1 w-full" />
+    </div>
+    <div>
+      <label for="wa-time" class="block font-semibold">Horario que prefieres <span class="font-normal text-ink-soft">(opcional)</span></label>
+      <select id="wa-time" name="time" class="field mt-1 w-full">
+        <option value="">Sin preferencia</option>
+        <option value="en la mañana">Mañana</option>
+        <option value="en la tarde">Tarde</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label for="wa-reason" class="block font-semibold">Motivo breve <span class="font-normal text-ink-soft">(opcional)</span></label>
+    <textarea id="wa-reason" name="reason" rows="2" maxlength="160" class="field mt-1 w-full" placeholder="Por ejemplo: control o primera consulta"></textarea>
+    <p class="mt-1 text-sm text-ink-soft">Por favor no escribas diagnósticos ni datos médicos detallados. Eso lo conversarás con el doctor.</p>
+  </div>
+
+  <div class="rounded-2xl bg-teal-50 p-4">
+    <p class="text-sm font-semibold text-teal-900">Así quedará tu mensaje</p>
+    <p id="wa-preview" class="mt-1 whitespace-pre-line text-ink-soft" aria-live="polite"></p>
+  </div>
+
+  <button type="submit" class="btn btn-whatsapp w-full">
+    <MessageCircle aria-hidden="true" size={20} /> Abrir WhatsApp con mi mensaje
+  </button>
+
+  <div id="wa-done" class="hidden rounded-2xl bg-teal-50 p-4 text-teal-900" role="status">
+    <p class="font-semibold">Abrimos WhatsApp con tu mensaje.</p>
+    <p class="mt-1 text-sm">Recuerda pulsar «Enviar» en WhatsApp. El consultorio te responderá para coordinar el día y la hora.</p>
+    <p class="mt-2 text-sm">¿No se abrió? <a id="wa-link" class="font-semibold underline underline-offset-4" href="#" target="_blank" rel="noopener noreferrer">Toca aquí para abrirlo<span class="sr-only"> (se abre en una pestaña nueva)</span></a>.</p>
+  </div>
+
+  <noscript>
+    <p class="rounded-2xl bg-teal-50 p-4 text-sm text-teal-900">
+      Este formulario necesita JavaScript. Puedes escribirnos directamente por
+      <a class="font-semibold underline" href={whatsappLink("Hola, quisiera pedir una cita con el Dr. Vargas.")}>WhatsApp</a>.
+    </p>
+  </noscript>
+</form>
+
+<script>
+  const form = document.getElementById("wa-form") as HTMLFormElement | null;
+  if (form) {
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+    const name = $<HTMLInputElement>("wa-name");
+    const service = $<HTMLSelectElement>("wa-service");
+    const date = $<HTMLInputElement>("wa-date");
+    const time = $<HTMLSelectElement>("wa-time");
+    const reason = $<HTMLTextAreaElement>("wa-reason");
+    const preview = $("wa-preview");
+    const done = $("wa-done");
+    const link = $<HTMLAnchorElement>("wa-link");
+
+    // No se ofrecen fechas pasadas (hora local del dispositivo).
+    const now = new Date();
+    date.min = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
+    const clean = (s: string) => s.replace(/\s+/g, " ").trim();
+    const dayText = () => {
+      if (!date.value) return "";
+      const d = new Date(`${date.value}T12:00:00`);
+      return new Intl.DateTimeFormat("es-BO", { weekday: "long", day: "numeric", month: "long" }).format(d);
+    };
+    const message = () => {
+      const who = clean(name.value) || "[tu nombre]";
+      const what = service.value ? ` para ${service.value}` : "";
+      const lines = [`Hola, soy ${who}. Quisiera pedir una cita con el ${form.dataset.doctor}${what}.`];
+      const pref = [dayText() && `el ${dayText()}`, time.value].filter(Boolean).join(" ");
+      if (pref) lines.push(`Me vendría bien ${pref}.`);
+      if (clean(reason.value)) lines.push(`Motivo: ${clean(reason.value)}.`);
+      lines.push("Gracias.");
+      return lines.join("\n");
+    };
+    const refresh = () => (preview.textContent = message());
+    [name, service, date, time, reason].forEach((el) => el.addEventListener("input", refresh));
+    refresh();
+
+    const fail = (input: HTMLElement, errId: string, text: string) => {
+      const err = $(errId);
+      err.textContent = text;
+      err.classList.remove("hidden");
+      input.setAttribute("aria-invalid", "true");
+    };
+    const clear = (input: HTMLElement, errId: string) => {
+      $(errId).classList.add("hidden");
+      input.removeAttribute("aria-invalid");
+    };
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      clear(name, "wa-name-err");
+      clear(service, "wa-service-err");
+      let first: HTMLElement | null = null;
+      if (clean(name.value).length < 3) {
+        fail(name, "wa-name-err", "Escribe tu nombre para que el consultorio sepa quién eres.");
+        first = name;
+      }
+      if (!service.value) {
+        fail(service, "wa-service-err", "Elige el servicio que necesitas.");
+        first ??= service;
+      }
+      if (first) {
+        first.focus();
+        return;
+      }
+      const url = `${form.dataset.wa}?text=${encodeURIComponent(message())}`;
+      link.href = url;
+      done.classList.remove("hidden");
+      window.open(url, "_blank", "noopener");
+    });
+  }
+</script>

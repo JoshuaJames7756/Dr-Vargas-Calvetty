@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import { CLINIC } from "@dr-vargas/shared";
+import { HOURS, LITE } from "../lib/mode";
 import logoLight from "../assets/logo-light.png";
 
 interface Props {
@@ -39,7 +40,7 @@ const a = "underline-offset-4 hover:text-white hover:underline";
             ))}
             <a class={a} href={`tel:+${CLINIC.whatsappCountryCode}${CLINIC.phones.whatsapp}`}>{CLINIC.phones.whatsapp}</a>
           </p>
-          <p class="mt-1 text-teal-200">{CLINIC.hours.label}</p>
+          {HOURS && <p class="mt-1 text-teal-200">{HOURS}</p>}
         </div>
       )
     }
@@ -74,8 +75,8 @@ const a = "underline-offset-4 hover:text-white hover:underline";
         <a class="underline underline-offset-4 hover:text-white" href={CLINIC.developer.url} target="_blank" rel="noopener noreferrer">
           {CLINIC.developer.name}<span class="sr-only"> (se abre en una pestaña nueva)</span>
         </a>
-        <span aria-hidden="true"> · </span>
-        <a class="underline-offset-4 hover:text-white hover:underline" href="/panel/">Acceso del consultorio</a>
+        {!LITE && <span aria-hidden="true"> · </span>}
+        {!LITE && <a class="underline-offset-4 hover:text-white hover:underline" href="/panel/">Acceso del consultorio</a>}
       </p>
     </div>
     <p class="container-page pb-6 text-xs text-teal-300">

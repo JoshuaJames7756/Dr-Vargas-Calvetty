@@ -1,6 +1,7 @@
 ---
 import { CalendarCheck, Clock, ExternalLink, MapPin, MessageCircle, Navigation, Phone } from "lucide-react";
 import { CLINIC, whatsappLink } from "@dr-vargas/shared";
+import { COPY, HOURS } from "../lib/mode";
 
 interface Props {
   /** En la pagina de contacto el titulo es el h1 de la pagina. */
@@ -47,7 +48,7 @@ const chip = "flex h-11 w-11 items-center justify-center rounded-2xl";
             {CLINIC.address.city}
           </p>
         </address>
-        <p class="mt-4 flex items-start gap-2 text-ink-soft"><Clock aria-hidden="true" size={18} class="mt-1 shrink-0 text-teal-600" /> {CLINIC.hours.label}</p>
+        <p class="mt-4 flex items-start gap-2 text-ink-soft"><Clock aria-hidden="true" size={18} class="mt-1 shrink-0 text-teal-600" /> {HOURS ?? COPY.hoursFallback}</p>
         <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary mt-5 w-full">
           <Navigation aria-hidden="true" size={18} /> Cómo llegar<span class="sr-only"> (se abre en una pestaña nueva)</span>
         </a>
@@ -64,7 +65,7 @@ const chip = "flex h-11 w-11 items-center justify-center rounded-2xl";
             {CLINIC.phones.landlines.map((p) => <a class="font-semibold text-teal-800 underline-offset-4 hover:underline" href={`tel:+591${p}`}>{p}</a>)}
             <a class="font-semibold text-teal-800 underline-offset-4 hover:underline" href={`tel:+${CLINIC.whatsappCountryCode}${CLINIC.phones.whatsapp}`}>{CLINIC.phones.whatsapp}</a>
           </p>
-          </div><p class="mt-5 text-sm text-ink-soft">{CLINIC.hours.label}</p>
+          </div>{HOURS && <p class="mt-5 text-sm text-ink-soft">{HOURS}</p>}
         </div>
       </li>
       <li data-reveal style="--d: 90ms">
@@ -81,7 +82,7 @@ const chip = "flex h-11 w-11 items-center justify-center rounded-2xl";
         <div class={tile + " h-full"}>
           <span class={chip + " bg-rose-100 text-rose-500"}><CalendarCheck aria-hidden="true" size={22} /></span>
           <h3 class="mt-4 text-xl">Solicita tu cita</h3>
-          <p class="mt-2 text-ink-soft">Elige el servicio y un horario libre. El consultorio te confirma por WhatsApp.</p>
+          <p class="mt-2 text-ink-soft">{COPY.tileText}</p>
           <a href={`${base}/cita`} class="btn btn-outline mt-6 w-full !border-teal-700 !text-teal-800 hover:!bg-teal-50">Solicitar cita</a>
         </div>
       </li>

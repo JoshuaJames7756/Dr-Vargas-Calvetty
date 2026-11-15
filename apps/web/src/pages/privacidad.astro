@@ -1,6 +1,7 @@
 ---
 import Pending from "../components/Pending.astro";
 import Base from "../layouts/Base.astro";
+import { LITE } from "../lib/mode";
 ---
 
 <Base
@@ -15,6 +16,31 @@ import Base from "../layouts/Base.astro";
 
       <Pending label="BORRADOR. Este texto describe el comportamiento técnico real del sitio, pero debe ser revisado por el doctor y por un profesional legal con conocimiento de la normativa boliviana antes de publicarse. No afirma cumplimiento legal." />
 
+      {
+        LITE ? (
+          <Fragment>
+      <h2 class="mt-8 text-2xl">Qué datos recibimos</h2>
+      <p class="mt-2 text-ink-soft">
+        Este sitio no guarda tus datos. El formulario de «Solicitar cita» solo arma un mensaje en tu navegador y abre
+        WhatsApp. El consultorio recibe lo que escribiste únicamente si tú pulsas «Enviar» en WhatsApp. Te pedimos no
+        incluir diagnósticos ni información médica detallada.
+      </p>
+
+      <h2 class="mt-8 text-2xl">Para qué los usamos</h2>
+      <p class="mt-2 text-ink-soft">
+        El consultorio usa tu nombre, el servicio y el mensaje que envías solo para responderte y coordinar tu cita. No
+        vendemos ni compartimos tus datos con fines publicitarios.
+      </p>
+
+      <h2 class="mt-8 text-2xl">WhatsApp</h2>
+      <p class="mt-2 text-ink-soft">
+        La conversación se realiza en WhatsApp y sus datos se rigen por las condiciones y la política de privacidad de esa
+        aplicación.
+      </p>
+
+          </Fragment>
+        ) : (
+          <Fragment>
       <h2 class="mt-8 text-2xl">Qué datos recibimos</h2>
       <p class="mt-2 text-ink-soft">
         Cuando solicitas una cita o escribes desde el formulario de contacto, recibimos tu nombre, tu número de teléfono y,
@@ -32,6 +58,10 @@ import Base from "../layouts/Base.astro";
         Los formularios usan Cloudflare Turnstile para distinguir personas de programas automáticos. Este servicio puede
         procesar datos técnicos de tu navegador para ese fin.
       </p>
+
+          </Fragment>
+        )
+      }
 
       <h2 class="mt-8 text-2xl">Mapa</h2>
       <p class="mt-2 text-ink-soft">

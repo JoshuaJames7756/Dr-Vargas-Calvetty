@@ -2,6 +2,8 @@
 
 Proyecto de Xion Technology. Sitio público (Astro), solicitud de citas sin cuenta, API en Cloudflare Workers (Hono) y, próximamente, panel privado del doctor (React + Vite).
 
+> **Versiones:** el sitio se publica por etapas (1 lanzamiento por WhatsApp, 2 contenido, 3 panel). Ver `docs/versiones.md`.
+
 ## Estado actual
 
 | Pieza | Estado |

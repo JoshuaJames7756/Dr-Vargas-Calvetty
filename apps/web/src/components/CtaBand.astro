@@ -2,13 +2,14 @@
 import { Image } from "astro:assets";
 import { CalendarCheck, MessageCircle } from "lucide-react";
 import { whatsappLink } from "@dr-vargas/shared";
+import { COPY } from "../lib/mode";
 import logoLight from "../assets/logo-light.png";
 
 interface Props {
   title?: string;
   text?: string;
 }
-const { title = "¿Quieres pedir tu cita?", text = "Elige el servicio y un horario libre. El consultorio revisa tu solicitud y te confirma por WhatsApp." } = Astro.props;
+const { title = "¿Quieres pedir tu cita?", text = COPY.ctaText } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
