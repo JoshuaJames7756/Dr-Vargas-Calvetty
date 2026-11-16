@@ -22,4 +22,3 @@ Las dos primeras estan solo como referencia, por si un dia hay que crear una bas
 ## Regla para el futuro
 
 Cada cambio de base de datos nuevo llegara como el siguiente archivo numerado (`006_...`). Se ejecutan en orden, uno por uno, y nunca se edita un archivo ya aplicado.
-Reed

@@ -1,12 +1,12 @@
 ---
-import { Check } from "lucide-react";
+import { MessageCircle } from "lucide-react";
+import { whatsappLink } from "@dr-vargas/shared";
 import { SERVICE_GROUPS } from "../data/services";
 import Pending from "./Pending.astro";
 import Sample from "./Sample.astro";
 
 /** Lista completa de servicios. Ginecologia va a todo el ancho (lista en columnas) y debajo Oncologia y Mastologia, sin huecos laterales. */
 const [gineco, ...rest] = SERVICE_GROUPS;
-const Item = (item: string) => item;
 ---
 
 <div class="grid gap-6">
@@ -15,14 +15,9 @@ const Item = (item: string) => item;
       <article class="card scroll-mt-28 p-6 md:p-8" id={gineco.id} data-reveal>
         <h3 class="text-2xl">{gineco.title}</h3>
         <p class="mt-2 text-ink-soft">{gineco.intro}</p>
-        <ul class="mt-6 grid gap-x-10 gap-y-3.5 sm:grid-cols-2 lg:grid-cols-3">
+        <ul class="mt-6 flex flex-wrap gap-2.5">
           {gineco.items.map((item) => (
-            <li class="flex items-start gap-3">
-              <span aria-hidden="true" class="mt-[0.2rem] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-700">
-                <Check size={13} strokeWidth={3} />
-              </span>
-              <span class="leading-snug">{Item(item)}</span>
-            </li>
+            <li class="rounded-full border border-teal-200 bg-teal-50/70 px-4 py-2 text-[0.95rem] leading-snug text-teal-900 transition duration-200 hover:-translate-y-0.5 hover:border-teal-400 hover:bg-white hover:shadow-soft motion-reduce:transition-none motion-reduce:hover:translate-y-0">{item}</li>
           ))}
         </ul>
       </article>
@@ -35,19 +30,17 @@ const Item = (item: string) => item;
           <h3 class="text-2xl">{g.title}</h3>
           <p class="mt-2 text-ink-soft">{g.intro}</p>
           {g.items.length > 0 ? (
-            <ul class="mt-6 space-y-3.5">
+            <ul class="mt-6 flex flex-wrap gap-2.5">
               {g.items.map((item) => (
-                <li class="flex items-start gap-3">
-                  <span aria-hidden="true" class="mt-[0.2rem] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-700">
-                    <Check size={13} strokeWidth={3} />
-                  </span>
-                  <span class="leading-snug">{item}</span>
-                </li>
+                <li class="rounded-full border border-teal-200 bg-teal-50/70 px-4 py-2 text-[0.95rem] leading-snug text-teal-900 transition duration-200 hover:-translate-y-0.5 hover:border-teal-400 hover:bg-white hover:shadow-soft motion-reduce:transition-none motion-reduce:hover:translate-y-0">{item}</li>
               ))}
             </ul>
           ) : (
-            <div class="mt-5">
-              <p class="text-ink-soft">Consulta por WhatsApp para saber qué atención de mastología necesitas.</p>
+            <div class="mt-6 rounded-2xl bg-teal-50 p-5">
+              <p class="text-teal-900">Consulta por WhatsApp para saber qué atención de mastología necesitas.</p>
+              <a href={whatsappLink("Hola, quisiera consultar sobre atención de mastología con el Dr. Vargas.")} target="_blank" rel="noopener noreferrer" class="btn btn-outline mt-4 !border-teal-700 !bg-white !text-teal-800 hover:!bg-teal-100">
+                <MessageCircle aria-hidden="true" size={18} /> Consultar por WhatsApp<span class="sr-only"> (se abre en una pestaña nueva)</span>
+              </a>
               <Sample label="Servicios de ejemplo. El doctor indica cuáles ofrece.">
                 <ul class="space-y-2 text-ink">
                   <li>[Servicio de mastología 1]</li>
