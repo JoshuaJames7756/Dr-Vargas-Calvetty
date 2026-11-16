@@ -152,6 +152,12 @@ test.describe("sitio publico", () => {
   test("el menu movil se abre, se cierra con Escape y devuelve el foco", async ({ page, isMobile }) => {
     test.skip(!isMobile, "solo aplica a movil");
     await page.goto("/");
+    if (isMobile) {
+      // Cerrado muestra solo la hamburguesa; abierto, solo la X.
+      const toggle = page.getByRole("button", { name: "Abrir menú" });
+      await expect(toggle.locator("svg.lucide-menu")).toBeVisible();
+      await expect(toggle.locator("svg.lucide-x")).toBeHidden();
+    }
     const btn = page.getByRole("button", { name: "Abrir menú" });
     await btn.click();
     await expect(page.getByRole("navigation", { name: "Menú principal" })).toBeVisible();

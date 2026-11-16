@@ -41,14 +41,14 @@ const chip = "flex h-11 w-11 items-center justify-center rounded-2xl";
       </div>
       <div class="p-6 sm:p-7 lg:absolute lg:left-6 lg:top-6 lg:w-[21rem] lg:rounded-3xl lg:bg-white lg:shadow-[0_20px_50px_-20px_rgb(10_63_66/0.45)] lg:ring-1 lg:ring-line">
         <address class="not-italic">
-          <p class="flex items-center gap-2 font-display text-xl text-teal-900"><MapPin aria-hidden="true" size={20} class="text-teal-600" /> Consultorio</p>
+          <p class="flex items-center gap-2 font-display text-xl text-teal-900"><MapPin aria-hidden="true" size={20} className="text-teal-600" /> Consultorio</p>
           <p class="mt-2 text-ink-soft">
             {CLINIC.address.line1}<br />
             {CLINIC.address.line2}, {CLINIC.address.floor.toLowerCase()}<br />
             {CLINIC.address.city}
           </p>
         </address>
-        <p class="mt-4 flex items-start gap-2 text-ink-soft"><Clock aria-hidden="true" size={18} class="mt-1 shrink-0 text-teal-600" /> {HOURS ?? COPY.hoursFallback}</p>
+        <p class="mt-4 flex items-start gap-2 text-ink-soft"><Clock aria-hidden="true" size={18} className="mt-1 shrink-0 text-teal-600" /> {HOURS ?? COPY.hoursFallback}</p>
         <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary mt-5 w-full">
           <Navigation aria-hidden="true" size={18} /> Cómo llegar<span class="sr-only"> (se abre en una pestaña nueva)</span>
         </a>
